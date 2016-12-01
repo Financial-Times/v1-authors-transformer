@@ -42,8 +42,8 @@ func TestHandlers(t *testing.T) {
 		contentType  string // Contents of the Content-Type header
 		body         string
 	}{
-		{"Success - get person by uuid",
-			newRequest("GET", fmt.Sprintf("/transformers/people/%s", testUUID)),
+		{"Success - get author by uuid",
+			newRequest("GET", fmt.Sprintf("/transformers/authors/%s", testUUID)),
 			&dummyService{
 				found:       true,
 				initialised: true,
@@ -51,17 +51,17 @@ func TestHandlers(t *testing.T) {
 			http.StatusOK,
 			"application/json",
 			getPersonByUUIDResponse},
-		{"Not found - get person by uuid",
-			newRequest("GET", fmt.Sprintf("/transformers/people/%s", testUUID)),
+		{"Not found - get author by uuid",
+			newRequest("GET", fmt.Sprintf("/transformers/authors/%s", testUUID)),
 			&dummyService{
 				found:       false,
 				initialised: true,
 				people:      []person{{}}},
 			http.StatusNotFound,
 			"application/json",
-			"{\"message\": \"Person not found\"}\n"},
-		{"Service unavailable - get person by uuid",
-			newRequest("GET", fmt.Sprintf("/transformers/people/%s", testUUID)),
+			"{\"message\": \"Author not found\"}\n"},
+		{"Service unavailable - get author by uuid",
+			newRequest("GET", fmt.Sprintf("/transformers/authors/%s", testUUID)),
 			&dummyService{
 				found:       false,
 				initialised: false,
@@ -69,8 +69,8 @@ func TestHandlers(t *testing.T) {
 			http.StatusServiceUnavailable,
 			"application/json",
 			"{\"message\": \"Service Unavailable\"}\n"},
-		{"Success - get people count",
-			newRequest("GET", "/transformers/people/__count"),
+		{"Success - get authors count",
+			newRequest("GET", "/transformers/authors/__count"),
 			&dummyService{
 				found:       true,
 				count:       1,
@@ -79,8 +79,8 @@ func TestHandlers(t *testing.T) {
 			http.StatusOK,
 			"application/json",
 			"1"},
-		{"Failure - get people count",
-			newRequest("GET", "/transformers/people/__count"),
+		{"Failure - get authors count",
+			newRequest("GET", "/transformers/authors/__count"),
 			&dummyService{
 				err:         errors.New("Something broke"),
 				found:       true,
@@ -90,8 +90,8 @@ func TestHandlers(t *testing.T) {
 			http.StatusInternalServerError,
 			"application/json",
 			"{\"message\": \"Something broke\"}\n"},
-		{"Failure - get people count not init",
-			newRequest("GET", "/transformers/people/__count"),
+		{"Failure - get authors count not init",
+			newRequest("GET", "/transformers/authors/__count"),
 			&dummyService{
 				err:         errors.New("Something broke"),
 				found:       true,
@@ -100,8 +100,8 @@ func TestHandlers(t *testing.T) {
 				people:      []person{{UUID: testUUID}}},
 			http.StatusServiceUnavailable,
 			"application/json", "{\"message\": \"Service Unavailable\"}\n"},
-		{"get people - success",
-			newRequest("GET", "/transformers/people"),
+		{"get authors - success",
+			newRequest("GET", "/transformers/authors"),
 			&dummyService{
 				found:       true,
 				initialised: true,
@@ -110,17 +110,17 @@ func TestHandlers(t *testing.T) {
 			http.StatusOK,
 			"application/json",
 			getPeopleResponse},
-		{"get people - Not found",
-			newRequest("GET", "/transformers/people"),
+		{"get authors - Not found",
+			newRequest("GET", "/transformers/authors"),
 			&dummyService{
 				initialised: true,
 				count:       0,
 				people:      []person{}},
 			http.StatusNotFound,
 			"application/json",
-			"{\"message\": \"People not found\"}\n"},
-		{"get people - Service unavailable",
-			newRequest("GET", "/transformers/people"),
+			"{\"message\": \"Authors not found\"}\n"},
+		{"get authors - Service unavailable",
+			newRequest("GET", "/transformers/authors"),
 			&dummyService{
 				found:       false,
 				initialised: false,
@@ -128,8 +128,8 @@ func TestHandlers(t *testing.T) {
 			http.StatusServiceUnavailable,
 			"application/json",
 			"{\"message\": \"Service Unavailable\"}\n"},
-		{"get people IDS - Success",
-			newRequest("GET", "/transformers/people/__id"),
+		{"get authors IDS - Success",
+			newRequest("GET", "/transformers/authors/__id"),
 			&dummyService{
 				found:       true,
 				initialised: true,
@@ -138,17 +138,17 @@ func TestHandlers(t *testing.T) {
 			http.StatusOK,
 			"application/json",
 			getPeopleByUUIDResponse},
-		{"get people IDS - Not found",
-			newRequest("GET", "/transformers/people/__id"),
+		{"get authors IDS - Not found",
+			newRequest("GET", "/transformers/authors/__id"),
 			&dummyService{
 				initialised: true,
 				count:       0,
 				people:      []person{}},
 			http.StatusNotFound,
 			"application/json",
-			"{\"message\": \"People not found\"}\n"},
-		{"get people IDS - Service unavailable",
-			newRequest("GET", "/transformers/people/__id"),
+			"{\"message\": \"Authors not found\"}\n"},
+		{"get authors IDS - Service unavailable",
+			newRequest("GET", "/transformers/authors/__id"),
 			&dummyService{
 				found:       false,
 				initialised: false,
@@ -165,7 +165,7 @@ func TestHandlers(t *testing.T) {
 			http.StatusServiceUnavailable,
 			"application/json",
 			""},
-		{"GTG unavailable - get GTG but no people",
+		{"GTG unavailable - get GTG but no authors",
 			newRequest("GET", status.GTGPath),
 			&dummyService{
 				found:       false,
@@ -208,16 +208,16 @@ func TestHandlers(t *testing.T) {
 			"application/json",
 			"regex=Service is up and running"},
 		{"Reload accepted - request reload",
-			newRequest("POST", "/transformers/people/__reload"),
+			newRequest("POST", "/transformers/authors/__reload"),
 			&dummyService{
 				wg:          &wg,
 				initialised: true,
 				dataLoaded:  true},
 			http.StatusAccepted,
 			"application/json",
-			"{\"message\": \"Reloading people\"}\n"},
+			"{\"message\": \"Reloading authors\"}\n"},
 		{"Reload accepted even though error loading data in background.",
-			newRequest("POST", "/transformers/people/__reload"),
+			newRequest("POST", "/transformers/authors/__reload"),
 			&dummyService{
 				wg:          &wg,
 				err:         errors.New("Boom goes the backend..."),
@@ -225,9 +225,9 @@ func TestHandlers(t *testing.T) {
 				dataLoaded:  true},
 			http.StatusAccepted,
 			"application/json",
-			"{\"message\": \"Reloading people\"}\n"},
+			"{\"message\": \"Reloading authors\"}\n"},
 		{"Reload - Service unavailable as not initialised",
-			newRequest("POST", "/transformers/people/__reload"),
+			newRequest("POST", "/transformers/authors/__reload"),
 			&dummyService{
 				wg:          &wg,
 				err:         errors.New("Boom goes the backend..."),
@@ -237,7 +237,7 @@ func TestHandlers(t *testing.T) {
 			"application/json",
 			"{\"message\": \"Service Unavailable\"}\n"},
 		{"Reload - Service unavailable as data not loaded",
-			newRequest("POST", "/transformers/people/__reload"),
+			newRequest("POST", "/transformers/authors/__reload"),
 			&dummyService{
 				wg:          &wg,
 				err:         errors.New("Boom goes the backend..."),
@@ -279,7 +279,7 @@ func TestReloadIsCalled(t *testing.T) {
 		count:       2,
 		people:      []person{}}
 	log.Infof("s.loadDBCalled: %v", s.loadDBCalled)
-	router(s).ServeHTTP(rec, newRequest("POST", "/transformers/people/__reload"))
+	router(s).ServeHTTP(rec, newRequest("POST", "/transformers/authors/__reload"))
 	wg.Wait()
 	assert.True(t, s.loadDBCalled)
 }
@@ -332,7 +332,7 @@ func (s *dummyService) getPeopleLinks() (io.PipeReader, error) {
 	go func() {
 		var links []personLink
 		for _, sub := range s.people {
-			links = append(links, personLink{APIURL: "http://localhost:8080/transformers/people/" + sub.UUID})
+			links = append(links, personLink{APIURL: "http://localhost:8080/transformers/authors/" + sub.UUID})
 		}
 		b, _ := json.Marshal(links)
 		log.Infof("Writing bytes... %v", string(b))
@@ -371,12 +371,12 @@ func (s *dummyService) reloadDB() error {
 func router(s PeopleService) *mux.Router {
 	m := mux.NewRouter()
 	h := NewPeopleHandler(s)
-	m.HandleFunc("/transformers/people", h.GetPeople).Methods("GET")
-	m.HandleFunc("/transformers/people/__count", h.GetCount).Methods("GET")
-	m.HandleFunc("/transformers/people/__reload", h.Reload).Methods("POST")
-	m.HandleFunc("/transformers/people/__id", h.GetPeopleUUIDs).Methods("GET")
-	m.HandleFunc("/transformers/people/{uuid}", h.GetPersonByUUID).Methods("GET")
-	m.HandleFunc("/__health", v1a.Handler("V1 People Transformer Healthchecks", "Checks for the health of the service", h.HealthCheck()))
+	m.HandleFunc("/transformers/authors", h.GetPeople).Methods("GET")
+	m.HandleFunc("/transformers/authors/__count", h.GetCount).Methods("GET")
+	m.HandleFunc("/transformers/authors/__reload", h.Reload).Methods("POST")
+	m.HandleFunc("/transformers/authors/__id", h.GetPeopleUUIDs).Methods("GET")
+	m.HandleFunc("/transformers/authors/{uuid}", h.GetPersonByUUID).Methods("GET")
+	m.HandleFunc("/__health", v1a.Handler("V1 Authors Transformer Healthchecks", "Checks for the health of the service", h.HealthCheck()))
 	g2gHandler := status.NewGoodToGoHandler(gtg.StatusChecker(h.G2GCheck))
 	m.HandleFunc(status.GTGPath, g2gHandler)
 	return m

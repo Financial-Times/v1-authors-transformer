@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	cacheBucket = "person"
+	cacheBucket = "author"
 	//uppAuthority = "http://api.ft.com/system/FT-UPP"
 	//tmeAuthority = "http://api.ft.com/system/FT-TME"
 )
@@ -257,7 +257,7 @@ func (s *peopleServiceImpl) loadDB() error {
 			return err
 		}
 		if len(terms) < 1 {
-			log.Info("Finished fetching people from TME. Waiting subroutines to terminate.")
+			log.Info("Finished fetching authors from TME. Waiting subroutines to terminate.")
 			break
 		}
 
@@ -280,7 +280,7 @@ func (s *peopleServiceImpl) processTerms(terms []interface{}, c chan<- []person)
 
 func (s *peopleServiceImpl) processPeople(c <-chan []person, wg *sync.WaitGroup) {
 	for people := range c {
-		log.Infof("Processing batch of %v people.", len(people))
+		log.Infof("Processing batch of %v authors.", len(people))
 		if err := s.db.Batch(func(tx *bolt.Tx) error {
 			bucket := tx.Bucket([]byte(cacheBucket))
 			if bucket == nil {
@@ -303,7 +303,7 @@ func (s *peopleServiceImpl) processPeople(c <-chan []person, wg *sync.WaitGroup)
 		wg.Done()
 	}
 
-	log.Info("Finished processing all people.")
+	log.Info("Finished processing all authors.")
 	if s.isInitialised() {
 		s.setDataLoaded(true)
 	}

@@ -1,21 +1,21 @@
-# V1 People Transformer
-[![CircleCI](https://circleci.com/gh/Financial-Times/v1-people-transformer.svg?style=svg)](https://circleci.com/gh/Financial-Times/v1-people-transformer) [![Go Report Card](https://goreportcard.com/badge/github.com/Financial-Times/v1-people-transformer)](https://goreportcard.com/report/github.com/Financial-Times/v1-people-transformer) [![Coverage Status](https://coveralls.io/repos/github/Financial-Times/v1-people-transformer/badge.svg?branch=master)](https://coveralls.io/github/Financial-Times/v1-people-transformer?branch=master)
+# V1 Authors Transformer
+[![CircleCI](https://circleci.com/gh/Financial-Times/v1-authors-transformer.svg?style=svg)](https://circleci.com/gh/Financial-Times/v1-authors-transformer) [![Go Report Card](https://goreportcard.com/badge/github.com/Financial-Times/v1-people-transformer)](https://goreportcard.com/report/github.com/Financial-Times/v1-authors-transformer) [![Coverage Status](https://coveralls.io/repos/github/Financial-Times/v1-authors-transformer/badge.svg?branch=master)](https://coveralls.io/github/Financial-Times/v1-authors-transformer?branch=master) [![codecov](https://codecov.io/gh/Financial-Times/v1-authors-transformer/branch/master/graph/badge.svg)](https://codecov.io/gh/Financial-Times/v1-authors-transformer)
 
-An API for pulling in and transforming V1/TME People into the UPP representation of a Person 
+An API for pulling in and transforming V1/TME Authors into the UPP representation of an Author 
 
 ## Installation
 
 For the first time:
 
-`go get github.com/Financial-Times/v1-people-transformer`
+`go get github.com/Financial-Times/v1-authors-transformer`
 
 or update:
 
-`go get -u github.com/Financial-Times/v1-people-transformer`
+`go get -u github.com/Financial-Times/v1-authors-transformer`
 
 ## Running
 
-`$GOPATH/bin/v1-people-transformer --tme-username={tme-username} --port={port} --tme-password={tme-password} --token={tme-token} --base-url={base-url for the app} --tme-base-url={tme-base-url} --maxRecords={maxRecords} --batchSize={batchSize} --cache-file-name={cache-file-name}`
+`$GOPATH/bin/v1-authors-transformer --tme-username={tme-username} --port={port} --tme-password={tme-password} --token={tme-token} --base-url={base-url for the app} --tme-base-url={tme-base-url} --maxRecords={maxRecords} --batchSize={batchSize} --cache-file-name={cache-file-name}`
 
 TME credentials are mandatory and can be found in lastpass
 
@@ -29,37 +29,37 @@ TME credentials are mandatory and can be found in lastpass
 
 ## Endpoints
 
-### GET /transformers/people
-The V1 people transformer holds all the V1 People in memory and this endpoint gets the JSON for ALL the people. Useful for piping to a file  or using with up-rest-utils but be careful using this via Postman or a Browser as it is a lot of JSON
+### GET /transformers/authors
+The V1 Authors transformer holds all the V1 Authors in memory and this endpoint gets the JSON for ALL the Authors. Useful for piping to a file  or using with up-rest-utils but be careful using this via Postman or a Browser as it is a lot of JSON
 
 A successful GET results in a 200. 
 
-`curl -X GET https://{pub-semantic-user}:{pub-semantic-password}@semantic-up.ft.com/__v1-people-transformer/transformers/people`
+`curl -X GET https://{pub-semantic-user}:{pub-semantic-password}@semantic-up.ft.com/__v1-authors-transformer/transformers/authors`
 
-### GET /transformers/people/{uuid}
-The V1 people transformer holds all the V1 People in memory and this endpoint gets the JSON a person with a given UUID. The UUID is derived from the TME composite id at this point
+### GET /transformers/authors/{uuid}
+The V1 Authors transformer holds all the V1 Authors in memory and this endpoint gets the JSON a person with a given UUID. The UUID is derived from the TME composite id at this point
 
 A successful GET results in a 200 and 404 for not finding the person
 
-`curl -X GET https://{pub-semantic-user}:{pub-semantic-password}@semantic-up.ft.com/__v1-people-transformer/transformers/people/8138ca3f-b80d-3ef8-ad59-6a9b6ea5f15e`
+`curl -X GET https://{pub-semantic-user}:{pub-semantic-password}@semantic-up.ft.com/__v1-authors-transformer/transformers/authors/8138ca3f-b80d-3ef8-ad59-6a9b6ea5f15e`
 
-### GET /transformers/people/__ids
+### GET /transformers/authors/__ids
 
-All of the UUIDS for ALL the V1 people - This is needed for loading via the concept publisher
+All of the UUIDS for ALL the V1 authors - This is needed for loading via the concept publisher
 
-`curl -X GET https://{pub-semantic-user}:{pub-semantic-password}@semantic-up.ft.com/__v1-people-transformer/transformers/people/__ids`
+`curl -X GET https://{pub-semantic-user}:{pub-semantic-password}@semantic-up.ft.com/__v1-authors-transformer/transformers/authors/__ids`
 
-### GET /transformers/people/__count
-A count of how people are in the transformer's memory cache
+### GET /transformers/authors/__count
+A count of how authors are in the transformer's memory cache
 
-`curl -X GET https://{pub-semantic-user}:{pub-semantic-password}@semantic-up.ft.com/__v1-people-transformer/transformers/people/__count`
+`curl -X GET https://{pub-semantic-user}:{pub-semantic-password}@semantic-up.ft.com/__v1-authors-transformer/transformers/authors/__count`
 
 
-### POST /transformers/people/__reload 
+### POST /transformers/authors/__reload 
 
-Fetches all the V1 people from TME and reloads the cache. There is no payload for this post
+Fetches all the V1 Authors from TME and reloads the cache. There is no payload for this post
 
-`curl -X POST https://{pub-semantic-user}:{pub-semantic-password}@semantic-up.ft.com/__v1-people-transformer/transformers/people/__reload`
+`curl -X POST https://{pub-semantic-user}:{pub-semantic-password}@semantic-up.ft.com/__v1-authors-transformer/transformers/authors/__reload`
 
 ### Admin endpoints
 Healthchecks: [http://localhost:8080/__health](http://localhost:8080/__health)
@@ -70,3 +70,5 @@ Build-info: [http://localhost:8080/build-info](http://localhost:8080/build-info)
 
 Good to Go: [http://localhost:8080/__gtg](http://localhost:8080/__gtg) 
 
+### API Document  
+[V1 Authors Transformer API Endpoints](https://docs.google.com/document/d/1-Eyhs98a3J1zw5OHfFZ0uXzyFCywBKnvC3RmrBc29cU)

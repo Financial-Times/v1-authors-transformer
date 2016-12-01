@@ -43,7 +43,7 @@ func main() {
 	})
 	baseURL := app.String(cli.StringOpt{
 		Name:   "base-url",
-		Value:  "http://localhost:8080/transformers/people/",
+		Value:  "http://localhost:8080/transformers/authors/",
 		Desc:   "Base url",
 		EnvVar: "BASE_URL",
 	})
@@ -96,7 +96,7 @@ func main() {
 		EnvVar: "LOG_METRICS",
 	})
 
-	tmeTaxonomyName := "PN"
+	tmeTaxonomyName := "Authors"
 
 	app.Action = func() {
 		baseftrwapp.OutputMetricsIfRequired(*graphiteTCPAddress, *graphitePrefix, *logMetrics)
@@ -134,11 +134,11 @@ func main() {
 func router(handler people.PeopleHandler) {
 	servicesRouter := mux.NewRouter()
 
-	servicesRouter.HandleFunc("/transformers/people", handler.GetPeople).Methods("GET")
-	servicesRouter.HandleFunc("/transformers/people/__count", handler.GetCount).Methods("GET")
-	servicesRouter.HandleFunc("/transformers/people/__ids", handler.GetPeopleUUIDs).Methods("GET")
-	servicesRouter.HandleFunc("/transformers/people/__reload", handler.Reload).Methods("POST")
-	servicesRouter.HandleFunc("/transformers/people/{uuid:([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})}", handler.GetPersonByUUID).Methods("GET")
+	servicesRouter.HandleFunc("/transformers/authors", handler.GetPeople).Methods("GET")
+	servicesRouter.HandleFunc("/transformers/authors/__count", handler.GetCount).Methods("GET")
+	servicesRouter.HandleFunc("/transformers/authors/__ids", handler.GetPeopleUUIDs).Methods("GET")
+	servicesRouter.HandleFunc("/transformers/authors/__reload", handler.Reload).Methods("POST")
+	servicesRouter.HandleFunc("/transformers/authors/{uuid:([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})}", handler.GetPersonByUUID).Methods("GET")
 
 	var monitoringRouter http.Handler = servicesRouter
 	monitoringRouter = httphandlers.TransactionAwareRequestLoggingHandler(log.StandardLogger(), monitoringRouter)
@@ -149,7 +149,7 @@ func router(handler people.PeopleHandler) {
 	http.HandleFunc(status.BuildInfoPath, status.BuildInfoHandler)
 	http.HandleFunc(status.BuildInfoPathDW, status.BuildInfoHandler)
 
-	http.HandleFunc("/__health", v1a.Handler("V1 People Transformer Healthchecks", "Checks for the health of the service", handler.HealthCheck()))
+	http.HandleFunc("/__health", v1a.Handler("V1 Authors Transformer Healthchecks", "Checks for the health of the service", handler.HealthCheck()))
 
 	g2gHandler := status.NewGoodToGoHandler(gtg.StatusChecker(handler.G2GCheck))
 	http.HandleFunc(status.GTGPath, g2gHandler)

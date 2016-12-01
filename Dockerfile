@@ -1,6 +1,6 @@
 FROM alpine:3.4
 
-ARG PROJECT=v1-people-transformer
+ARG PROJECT=v1-authors-transformer
 
 ADD . /${PROJECT}/
 
@@ -32,4 +32,4 @@ RUN apk add --no-cache bash \
   && apk del .build-dependencies \
   && rm -rf $GOPATH /var/cache/apk/*
 
-CMD [ "/v1-people-transformer" ]
+CMD [ "/v1-authors-transformer" ]

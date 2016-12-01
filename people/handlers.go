@@ -29,7 +29,7 @@ func (h *PeopleHandler) GetPeople(writer http.ResponseWriter, req *http.Request)
 	}
 
 	if c, _ := h.service.getCount(); c == 0 {
-		writeJSONMessageWithStatus(writer, "People not found", http.StatusNotFound)
+		writeJSONMessageWithStatus(writer, "Authors not found", http.StatusNotFound)
 		return
 	}
 
@@ -52,7 +52,7 @@ func (h *PeopleHandler) GetPeopleUUIDs(writer http.ResponseWriter, req *http.Req
 	}
 
 	if c, _ := h.service.getCount(); c == 0 {
-		writeJSONMessageWithStatus(writer, "People not found", http.StatusNotFound)
+		writeJSONMessageWithStatus(writer, "Authors not found", http.StatusNotFound)
 		return
 	}
 
@@ -87,7 +87,7 @@ func (h *PeopleHandler) HealthCheck() v1a.Check {
 	return v1a.Check{
 		BusinessImpact:   "Unable to respond to requests",
 		Name:             "Check service has finished initilising.",
-		PanicGuide:       "https://sites.google.com/a/ft.com/ft-technology-service-transition/home/run-book-library/v1-people-transformer",
+		PanicGuide:       "https://sites.google.com/a/ft.com/ft-technology-service-transition/home/run-book-library/v1-authors-transformer",
 		Severity:         1,
 		TechnicalSummary: "Cannot serve any content as data not loaded.",
 		Checker: func() (string, error) {
@@ -135,12 +135,12 @@ func (h *PeopleHandler) Reload(writer http.ResponseWriter, req *http.Request) {
 			log.Errorf("ERROR opening db: %v", err.Error())
 		}
 	}()
-	writeJSONMessageWithStatus(writer, "Reloading people", http.StatusAccepted)
+	writeJSONMessageWithStatus(writer, "Reloading authors", http.StatusAccepted)
 }
 
 func writeJSONResponse(obj interface{}, found bool, writer http.ResponseWriter) {
 	if !found {
-		writeJSONMessageWithStatus(writer, "Person not found", http.StatusNotFound)
+		writeJSONMessageWithStatus(writer, "Author not found", http.StatusNotFound)
 		return
 	}
 
