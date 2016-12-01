@@ -4,8 +4,6 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"testing"
-	"github.com/pborman/uuid"
-	"fmt"
 )
 
 const (
