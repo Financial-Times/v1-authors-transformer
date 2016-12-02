@@ -102,7 +102,7 @@ func main() {
 		baseftrwapp.OutputMetricsIfRequired(*graphiteTCPAddress, *graphitePrefix, *logMetrics)
 		client := getResilientClient()
 		modelTransformer := new(authors.PersonTransformer)
-		s := authors.NewPeopleService(
+		s := authors.NewAuthorService(
 			tmereader.NewTmeRepository(
 				client,
 				*tmeBaseURL,

@@ -18,11 +18,11 @@ const (
 	//tmeAuthority = "http://api.ft.com/system/FT-TME"
 )
 
-type PeopleService interface {
-	getPeople() (io.PipeReader, error)
-	getPeopleLinks() (io.PipeReader, error)
-	getPeopleUUIDs() (io.PipeReader, error)
-	getPersonByUUID(uuid string) (person, bool, error)
+type AuthorService interface {
+	getAuthors() (io.PipeReader, error)
+	getAuthorLinks() (io.PipeReader, error)
+	getAuthorUUIDs() (io.PipeReader, error)
+	getAuthorByUUID(uuid string) (person, bool, error)
 	getCount() (int, error)
 	isInitialised() bool
 	isDataLoaded() bool
@@ -30,7 +30,7 @@ type PeopleService interface {
 	Shutdown() error
 }
 
-type peopleServiceImpl struct {
+type authorServiceImpl struct {
 	sync.RWMutex
 	repository    tmereader.Repository
 	baseURL       string
@@ -42,9 +42,9 @@ type peopleServiceImpl struct {
 	db            *bolt.DB
 }
 
-func NewPeopleService(repo tmereader.Repository, baseURL string, taxonomyName string, maxTmeRecords int, cacheFileName string) PeopleService {
-	s := &peopleServiceImpl{repository: repo, baseURL: baseURL, taxonomyName: taxonomyName, maxTmeRecords: maxTmeRecords, initialised: true, cacheFileName: cacheFileName}
-	go func(service *peopleServiceImpl) {
+func NewAuthorService(repo tmereader.Repository, baseURL string, taxonomyName string, maxTmeRecords int, cacheFileName string) AuthorService {
+	s := &authorServiceImpl{repository: repo, baseURL: baseURL, taxonomyName: taxonomyName, maxTmeRecords: maxTmeRecords, initialised: true, cacheFileName: cacheFileName}
+	go func(service *authorServiceImpl) {
 		err := service.loadDB()
 		if err != nil {
 			log.Errorf("Error while creating PeopleService: [%v]", err.Error())
@@ -53,31 +53,31 @@ func NewPeopleService(repo tmereader.Repository, baseURL string, taxonomyName st
 	return s
 }
 
-func (s *peopleServiceImpl) isInitialised() bool {
+func (s *authorServiceImpl) isInitialised() bool {
 	s.RLock()
 	defer s.RUnlock()
 	return s.initialised
 }
 
-func (s *peopleServiceImpl) setInitialised(val bool) {
+func (s *authorServiceImpl) setInitialised(val bool) {
 	s.Lock()
 	s.initialised = val
 	s.Unlock()
 }
 
-func (s *peopleServiceImpl) isDataLoaded() bool {
+func (s *authorServiceImpl) isDataLoaded() bool {
 	s.RLock()
 	defer s.RUnlock()
 	return s.dataLoaded
 }
 
-func (s *peopleServiceImpl) setDataLoaded(val bool) {
+func (s *authorServiceImpl) setDataLoaded(val bool) {
 	s.Lock()
 	s.dataLoaded = val
 	s.Unlock()
 }
 
-func (s *peopleServiceImpl) Shutdown() error {
+func (s *authorServiceImpl) Shutdown() error {
 	log.Info("Shuting down...")
 	s.Lock()
 	defer s.Unlock()
@@ -89,7 +89,7 @@ func (s *peopleServiceImpl) Shutdown() error {
 	return s.db.Close()
 }
 
-func (s *peopleServiceImpl) getCount() (int, error) {
+func (s *authorServiceImpl) getCount() (int, error) {
 	s.RLock()
 	defer s.RUnlock()
 	if !s.isDataLoaded() {
@@ -108,7 +108,7 @@ func (s *peopleServiceImpl) getCount() (int, error) {
 	return count, err
 }
 
-func (s *peopleServiceImpl) getPeople() (io.PipeReader, error) {
+func (s *authorServiceImpl) getAuthors() (io.PipeReader, error) {
 	s.RLock()
 	pv, pw := io.Pipe()
 	go func() {
@@ -129,7 +129,7 @@ func (s *peopleServiceImpl) getPeople() (io.PipeReader, error) {
 	return *pv, nil
 }
 
-func (s *peopleServiceImpl) getPeopleUUIDs() (io.PipeReader, error) {
+func (s *authorServiceImpl) getAuthorUUIDs() (io.PipeReader, error) {
 	s.RLock()
 	pv, pw := io.Pipe()
 	go func() {
@@ -154,7 +154,7 @@ func (s *peopleServiceImpl) getPeopleUUIDs() (io.PipeReader, error) {
 	return *pv, nil
 }
 
-func (s *peopleServiceImpl) getPeopleLinks() (io.PipeReader, error) {
+func (s *authorServiceImpl) getAuthorLinks() (io.PipeReader, error) {
 	s.RLock()
 	pv, pw := io.Pipe()
 	go func() {
@@ -186,7 +186,7 @@ func (s *peopleServiceImpl) getPeopleLinks() (io.PipeReader, error) {
 	return *pv, nil
 }
 
-func (s *peopleServiceImpl) getPersonByUUID(uuid string) (person, bool, error) {
+func (s *authorServiceImpl) getAuthorByUUID(uuid string) (person, bool, error) {
 	s.RLock()
 	defer s.RUnlock()
 	var cachedValue []byte
@@ -216,7 +216,7 @@ func (s *peopleServiceImpl) getPersonByUUID(uuid string) (person, bool, error) {
 	return cachedPerson, true, nil
 }
 
-func (s *peopleServiceImpl) openDB() error {
+func (s *authorServiceImpl) openDB() error {
 	s.Lock()
 	defer s.Unlock()
 	log.Infof("Opening database '%v'.", s.cacheFileName)
@@ -230,16 +230,16 @@ func (s *peopleServiceImpl) openDB() error {
 	return s.createCacheBucket()
 }
 
-func (s *peopleServiceImpl) reloadDB() error {
+func (s *authorServiceImpl) reloadDB() error {
 	s.setDataLoaded(false)
 	return s.loadDB()
 }
 
-func (s *peopleServiceImpl) loadDB() error {
+func (s *authorServiceImpl) loadDB() error {
 	var wg sync.WaitGroup
 	log.Info("Loading DB...")
 	c := make(chan []person)
-	go s.processPeople(c, &wg)
+	go s.processAuthors(c, &wg)
 	defer func(w *sync.WaitGroup) {
 		close(c)
 		w.Wait()
@@ -268,7 +268,7 @@ func (s *peopleServiceImpl) loadDB() error {
 	return nil
 }
 
-func (s *peopleServiceImpl) processTerms(terms []interface{}, c chan<- []person) {
+func (s *authorServiceImpl) processTerms(terms []interface{}, c chan<- []person) {
 	log.Info("Processing terms...")
 	var cacheToBeWritten []person
 	for _, iTerm := range terms {
@@ -278,7 +278,7 @@ func (s *peopleServiceImpl) processTerms(terms []interface{}, c chan<- []person)
 	c <- cacheToBeWritten
 }
 
-func (s *peopleServiceImpl) processPeople(c <-chan []person, wg *sync.WaitGroup) {
+func (s *authorServiceImpl) processAuthors(c <-chan []person, wg *sync.WaitGroup) {
 	for people := range c {
 		log.Infof("Processing batch of %v authors.", len(people))
 		if err := s.db.Batch(func(tx *bolt.Tx) error {
@@ -309,7 +309,7 @@ func (s *peopleServiceImpl) processPeople(c <-chan []person, wg *sync.WaitGroup)
 	}
 }
 
-func (s *peopleServiceImpl) createCacheBucket() error {
+func (s *authorServiceImpl) createCacheBucket() error {
 	return s.db.Update(func(tx *bolt.Tx) error {
 		if tx.Bucket([]byte(cacheBucket)) != nil {
 			log.Infof("Deleting bucket '%v'.", cacheBucket)

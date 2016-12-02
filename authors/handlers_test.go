@@ -37,7 +37,7 @@ func TestHandlers(t *testing.T) {
 	tests := []struct {
 		name         string
 		req          *http.Request
-		dummyService PeopleService
+		dummyService AuthorService
 		statusCode   int
 		contentType  string // Contents of the Content-Type header
 		body         string
@@ -303,7 +303,7 @@ type dummyService struct {
 	wg           *sync.WaitGroup
 }
 
-func (s *dummyService) getPeople() (io.PipeReader, error) {
+func (s *dummyService) getAuthors() (io.PipeReader, error) {
 	pv, pw := io.Pipe()
 	go func() {
 		encoder := json.NewEncoder(pw)
@@ -315,7 +315,7 @@ func (s *dummyService) getPeople() (io.PipeReader, error) {
 	return *pv, nil
 }
 
-func (s *dummyService) getPeopleUUIDs() (io.PipeReader, error) {
+func (s *dummyService) getAuthorUUIDs() (io.PipeReader, error) {
 	pv, pw := io.Pipe()
 	go func() {
 		encoder := json.NewEncoder(pw)
@@ -327,7 +327,7 @@ func (s *dummyService) getPeopleUUIDs() (io.PipeReader, error) {
 	return *pv, nil
 }
 
-func (s *dummyService) getPeopleLinks() (io.PipeReader, error) {
+func (s *dummyService) getAuthorLinks() (io.PipeReader, error) {
 	pv, pw := io.Pipe()
 	go func() {
 		var links []personLink
@@ -346,7 +346,7 @@ func (s *dummyService) getCount() (int, error) {
 	return s.count, s.err
 }
 
-func (s *dummyService) getPersonByUUID(uuid string) (person, bool, error) {
+func (s *dummyService) getAuthorByUUID(uuid string) (person, bool, error) {
 	return s.people[0], s.found, nil
 }
 
@@ -368,7 +368,7 @@ func (s *dummyService) reloadDB() error {
 	return s.err
 }
 
-func router(s PeopleService) *mux.Router {
+func router(s AuthorService) *mux.Router {
 	m := mux.NewRouter()
 	h := NewPeopleHandler(s)
 	m.HandleFunc("/transformers/authors", h.GetPeople).Methods("GET")

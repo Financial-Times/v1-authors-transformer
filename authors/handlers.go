@@ -14,10 +14,10 @@ import (
 )
 
 type PeopleHandler struct {
-	service PeopleService
+	service AuthorService
 }
 
-func NewPeopleHandler(service PeopleService) PeopleHandler {
+func NewPeopleHandler(service AuthorService) PeopleHandler {
 	return PeopleHandler{service}
 }
 
@@ -33,7 +33,7 @@ func (h *PeopleHandler) GetPeople(writer http.ResponseWriter, req *http.Request)
 		return
 	}
 
-	pv, err := h.service.getPeople()
+	pv, err := h.service.getAuthors()
 
 	if err != nil {
 		writeJSONMessageWithStatus(writer, err.Error(), http.StatusInternalServerError)
@@ -56,7 +56,7 @@ func (h *PeopleHandler) GetPeopleUUIDs(writer http.ResponseWriter, req *http.Req
 		return
 	}
 
-	pv, err := h.service.getPeopleUUIDs()
+	pv, err := h.service.getAuthorUUIDs()
 
 	if err != nil {
 		writeJSONMessageWithStatus(writer, err.Error(), http.StatusInternalServerError)
@@ -117,7 +117,7 @@ func (h *PeopleHandler) GetPersonByUUID(writer http.ResponseWriter, req *http.Re
 	vars := mux.Vars(req)
 	uuid := vars["uuid"]
 
-	obj, found, err := h.service.getPersonByUUID(uuid)
+	obj, found, err := h.service.getAuthorByUUID(uuid)
 	if err != nil {
 		writeJSONMessageWithStatus(writer, err.Error(), http.StatusInternalServerError)
 	}

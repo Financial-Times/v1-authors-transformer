@@ -43,7 +43,7 @@ func TestGetPeople(t *testing.T) {
 	defer service.Shutdown()
 	waitTillInit(t, service)
 	waitTillDataLoaded(t, service)
-	pv, err := service.getPeople()
+	pv, err := service.getAuthors()
 
 	var wg sync.WaitGroup
 	var res []person
@@ -76,7 +76,7 @@ func TestGetPeopleByUUID(t *testing.T) {
 	defer service.Shutdown()
 	waitTillInit(t, service)
 	waitTillDataLoaded(t, service)
-	pv, err := service.getPeopleUUIDs()
+	pv, err := service.getAuthorUUIDs()
 
 	var wg sync.WaitGroup
 	var res []personUUID
@@ -109,7 +109,7 @@ func TestGetPeopleLink(t *testing.T) {
 	defer service.Shutdown()
 	waitTillInit(t, service)
 	waitTillDataLoaded(t, service)
-	pv, err := service.getPeopleLinks()
+	pv, err := service.getAuthorLinks()
 
 	var wg sync.WaitGroup
 	var res []personLink
@@ -172,7 +172,7 @@ func TestGetPersonByUUID(t *testing.T) {
 		{"Success", "28d66fcc-bb56-363d-80c1-f2d957ef58cf", true, nil},
 		{"Success", "xxxxxxxx-bb56-363d-80c1-f2d957ef58cf", false, nil}}
 	for _, test := range tests {
-		person, found, err := service.getPersonByUUID(test.uuid)
+		person, found, err := service.getAuthorByUUID(test.uuid)
 		if test.err != nil {
 			assert.Equal(t, test.err, err)
 		} else if test.found {
@@ -199,14 +199,14 @@ func TestFailingOpeningDB(t *testing.T) {
 	assert.False(t, service.isInitialised(), "isInitialised should be false")
 }
 
-func assertCount(t *testing.T, s PeopleService, expected int) {
+func assertCount(t *testing.T, s AuthorService, expected int) {
 	count, err := s.getCount()
 	assert.NoError(t, err)
 	assert.Equal(t, expected, count)
 }
 
-func createTestPeopleService(repo tmereader.Repository, cacheFileName string) PeopleService {
-	return NewPeopleService(repo, "/base/url", "taxonomy_string", 1, cacheFileName)
+func createTestPeopleService(repo tmereader.Repository, cacheFileName string) AuthorService {
+	return NewAuthorService(repo, "/base/url", "taxonomy_string", 1, cacheFileName)
 }
 
 func getTempFile(t *testing.T) *os.File {
@@ -217,7 +217,7 @@ func getTempFile(t *testing.T) *os.File {
 	return tmpfile
 }
 
-func waitTillInit(t *testing.T, s PeopleService) {
+func waitTillInit(t *testing.T, s AuthorService) {
 	for i := 1; i <= 1000; i++ {
 		if s.isInitialised() {
 			log.Info("isInitialised was true")
@@ -228,7 +228,7 @@ func waitTillInit(t *testing.T, s PeopleService) {
 	assert.True(t, s.isInitialised())
 }
 
-func waitTillDataLoaded(t *testing.T, s PeopleService) {
+func waitTillDataLoaded(t *testing.T, s AuthorService) {
 	for i := 1; i <= 1000; i++ {
 		if s.isDataLoaded() {
 			log.Info("isDataLoaded was true")
