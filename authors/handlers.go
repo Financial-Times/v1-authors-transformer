@@ -13,15 +13,15 @@ import (
 	"strconv"
 )
 
-type PeopleHandler struct {
+type AuthorHandler struct {
 	service AuthorService
 }
 
-func NewPeopleHandler(service AuthorService) PeopleHandler {
-	return PeopleHandler{service}
+func NewAuthorHandler(service AuthorService) AuthorHandler {
+	return AuthorHandler{service}
 }
 
-func (h *PeopleHandler) GetPeople(writer http.ResponseWriter, req *http.Request) {
+func (h *AuthorHandler) GetAuthors(writer http.ResponseWriter, req *http.Request) {
 	writer.Header().Add("Content-Type", "application/json")
 	if !h.service.isInitialised() {
 		writeStatusServiceUnavailable(writer)
@@ -44,7 +44,7 @@ func (h *PeopleHandler) GetPeople(writer http.ResponseWriter, req *http.Request)
 	io.Copy(writer, &pv)
 }
 
-func (h *PeopleHandler) GetPeopleUUIDs(writer http.ResponseWriter, req *http.Request) {
+func (h *AuthorHandler) GetAuthorUUIDs(writer http.ResponseWriter, req *http.Request) {
 	writer.Header().Add("Content-Type", "application/json")
 	if !h.service.isInitialised() {
 		writeStatusServiceUnavailable(writer)
@@ -67,7 +67,7 @@ func (h *PeopleHandler) GetPeopleUUIDs(writer http.ResponseWriter, req *http.Req
 	io.Copy(writer, &pv)
 }
 
-func (h *PeopleHandler) GetCount(writer http.ResponseWriter, req *http.Request) {
+func (h *AuthorHandler) GetCount(writer http.ResponseWriter, req *http.Request) {
 	if !h.service.isInitialised() {
 		writer.Header().Add("Content-Type", "application/json")
 		writeStatusServiceUnavailable(writer)
@@ -82,7 +82,7 @@ func (h *PeopleHandler) GetCount(writer http.ResponseWriter, req *http.Request) 
 	writer.Write([]byte(strconv.Itoa(count)))
 }
 
-func (h *PeopleHandler) HealthCheck() v1a.Check {
+func (h *AuthorHandler) HealthCheck() v1a.Check {
 
 	return v1a.Check{
 		BusinessImpact:   "Unable to respond to requests",
@@ -99,7 +99,7 @@ func (h *PeopleHandler) HealthCheck() v1a.Check {
 	}
 }
 
-func (h *PeopleHandler) G2GCheck() gtg.Status {
+func (h *AuthorHandler) G2GCheck() gtg.Status {
 	count, err := h.service.getCount()
 	if h.service.isInitialised() && err == nil && count > 0 {
 		return gtg.Status{GoodToGo: true}
@@ -107,7 +107,7 @@ func (h *PeopleHandler) G2GCheck() gtg.Status {
 	return gtg.Status{GoodToGo: false}
 }
 
-func (h *PeopleHandler) GetPersonByUUID(writer http.ResponseWriter, req *http.Request) {
+func (h *AuthorHandler) GetAuthorByUUID(writer http.ResponseWriter, req *http.Request) {
 	writer.Header().Add("Content-Type", "application/json")
 	if !h.service.isInitialised() {
 		writeStatusServiceUnavailable(writer)
@@ -124,7 +124,7 @@ func (h *PeopleHandler) GetPersonByUUID(writer http.ResponseWriter, req *http.Re
 	writeJSONResponse(obj, found, writer)
 }
 
-func (h *PeopleHandler) Reload(writer http.ResponseWriter, req *http.Request) {
+func (h *AuthorHandler) Reload(writer http.ResponseWriter, req *http.Request) {
 	if !h.service.isInitialised() || !h.service.isDataLoaded() {
 		writeStatusServiceUnavailable(writer)
 		return

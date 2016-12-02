@@ -370,12 +370,12 @@ func (s *dummyService) reloadDB() error {
 
 func router(s AuthorService) *mux.Router {
 	m := mux.NewRouter()
-	h := NewPeopleHandler(s)
-	m.HandleFunc("/transformers/authors", h.GetPeople).Methods("GET")
+	h := NewAuthorHandler(s)
+	m.HandleFunc("/transformers/authors", h.GetAuthors).Methods("GET")
 	m.HandleFunc("/transformers/authors/__count", h.GetCount).Methods("GET")
 	m.HandleFunc("/transformers/authors/__reload", h.Reload).Methods("POST")
-	m.HandleFunc("/transformers/authors/__id", h.GetPeopleUUIDs).Methods("GET")
-	m.HandleFunc("/transformers/authors/{uuid}", h.GetPersonByUUID).Methods("GET")
+	m.HandleFunc("/transformers/authors/__id", h.GetAuthorUUIDs).Methods("GET")
+	m.HandleFunc("/transformers/authors/{uuid}", h.GetAuthorByUUID).Methods("GET")
 	m.HandleFunc("/__health", v1a.Handler("V1 Authors Transformer Healthchecks", "Checks for the health of the service", h.HealthCheck()))
 	g2gHandler := status.NewGoodToGoHandler(gtg.StatusChecker(h.G2GCheck))
 	m.HandleFunc(status.GTGPath, g2gHandler)

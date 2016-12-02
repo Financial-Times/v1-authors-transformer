@@ -119,7 +119,7 @@ func main() {
 			*maxRecords,
 			*cacheFileName)
 		defer s.Shutdown()
-		handler := authors.NewPeopleHandler(s)
+		handler := authors.NewAuthorHandler(s)
 		router(handler)
 
 		log.Printf("listening on %d", *port)
@@ -131,14 +131,14 @@ func main() {
 	app.Run(os.Args)
 }
 
-func router(handler authors.PeopleHandler) {
+func router(handler authors.AuthorHandler) {
 	servicesRouter := mux.NewRouter()
 
-	servicesRouter.HandleFunc("/transformers/authors", handler.GetPeople).Methods("GET")
+	servicesRouter.HandleFunc("/transformers/authors", handler.GetAuthors).Methods("GET")
 	servicesRouter.HandleFunc("/transformers/authors/__count", handler.GetCount).Methods("GET")
-	servicesRouter.HandleFunc("/transformers/authors/__ids", handler.GetPeopleUUIDs).Methods("GET")
+	servicesRouter.HandleFunc("/transformers/authors/__ids", handler.GetAuthorUUIDs).Methods("GET")
 	servicesRouter.HandleFunc("/transformers/authors/__reload", handler.Reload).Methods("POST")
-	servicesRouter.HandleFunc("/transformers/authors/{uuid:([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})}", handler.GetPersonByUUID).Methods("GET")
+	servicesRouter.HandleFunc("/transformers/authors/{uuid:([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})}", handler.GetAuthorByUUID).Methods("GET")
 
 	var monitoringRouter http.Handler = servicesRouter
 	monitoringRouter = httphandlers.TransactionAwareRequestLoggingHandler(log.StandardLogger(), monitoringRouter)
