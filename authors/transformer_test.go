@@ -10,7 +10,7 @@ const (
 	taxonomyName = "taxonomy_name"
 )
 
-func TestTransformPerson(t *testing.T) {
+func TestTransformAuthor(t *testing.T) {
 	testTerm := term{
 		CanonicalName: "Bob",
 		RawID:         "bob",

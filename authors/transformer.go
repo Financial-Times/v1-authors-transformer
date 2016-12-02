@@ -6,19 +6,19 @@ import (
 	"github.com/pborman/uuid"
 )
 
-type PersonTransformer struct {
+type AuthorTransformer struct {
 }
 
 func transformAuthor(tmeTerm term, taxonomyName string) author {
 	tmeIdentifier := buildTmeIdentifier(tmeTerm.RawID, taxonomyName)
-	personUUID := uuid.NewMD5(uuid.UUID{}, []byte(tmeIdentifier)).String()
+	authorUUID := uuid.NewMD5(uuid.UUID{}, []byte(tmeIdentifier)).String()
 	aliasList := buildAliasList(tmeTerm.Aliases)
 	return author{
-		UUID:      personUUID,
+		UUID:      authorUUID,
 		PrefLabel: tmeTerm.CanonicalName,
 		AlternativeIdentifiers: alternativeIdentifiers{
 			TME:   []string{tmeIdentifier},
-			Uuids: []string{personUUID},
+			Uuids: []string{authorUUID},
 		},
 		Type:    "Person",
 		Aliases: aliasList,
@@ -39,7 +39,7 @@ func buildAliasList(aList aliases) []string {
 	return aliasList
 }
 
-func (*PersonTransformer) UnMarshallTaxonomy(contents []byte) ([]interface{}, error) {
+func (*AuthorTransformer) UnMarshallTaxonomy(contents []byte) ([]interface{}, error) {
 	t := taxonomy{}
 	err := xml.Unmarshal(contents, &t)
 	if err != nil {
@@ -52,7 +52,7 @@ func (*PersonTransformer) UnMarshallTaxonomy(contents []byte) ([]interface{}, er
 	return interfaces, nil
 }
 
-func (*PersonTransformer) UnMarshallTerm(content []byte) (interface{}, error) {
+func (*AuthorTransformer) UnMarshallTerm(content []byte) (interface{}, error) {
 	dummyTerm := term{}
 	err := xml.Unmarshal(content, &dummyTerm)
 	if err != nil {
