@@ -1,5 +1,5 @@
 # V1 Authors Transformer
-[![CircleCI](https://circleci.com/gh/Financial-Times/v1-authors-transformer.svg?style=svg)](https://circleci.com/gh/Financial-Times/v1-authors-transformer) [![Go Report Card](https://goreportcard.com/badge/github.com/Financial-Times/v1-people-transformer)](https://goreportcard.com/report/github.com/Financial-Times/v1-authors-transformer) [![Coverage Status](https://coveralls.io/repos/github/Financial-Times/v1-authors-transformer/badge.svg?branch=master)](https://coveralls.io/github/Financial-Times/v1-authors-transformer?branch=master) [![codecov](https://codecov.io/gh/Financial-Times/v1-authors-transformer/branch/master/graph/badge.svg)](https://codecov.io/gh/Financial-Times/v1-authors-transformer)
+[![CircleCI](https://circleci.com/gh/Financial-Times/v1-authors-transformer.svg?style=svg)](https://circleci.com/gh/Financial-Times/v1-authors-transformer) [![Go Report Card](https://goreportcard.com/badge/github.com/Financial-Times/v1-authors-transformer)](https://goreportcard.com/report/github.com/Financial-Times/v1-authors-transformer) [![Coverage Status](https://coveralls.io/repos/github/Financial-Times/v1-authors-transformer/badge.svg?branch=master)](https://coveralls.io/github/Financial-Times/v1-authors-transformer?branch=master) [![codecov](https://codecov.io/gh/Financial-Times/v1-authors-transformer/branch/master/graph/badge.svg)](https://codecov.io/gh/Financial-Times/v1-authors-transformer)
 
 An API for pulling in and transforming V1/TME Authors into the UPP representation of an Author 
 
@@ -37,9 +37,9 @@ A successful GET results in a 200.
 `curl -X GET https://{pub-semantic-user}:{pub-semantic-password}@semantic-up.ft.com/__v1-authors-transformer/transformers/authors`
 
 ### GET /transformers/authors/{uuid}
-The V1 Authors transformer holds all the V1 Authors in memory and this endpoint gets the JSON a person with a given UUID. The UUID is derived from the TME composite id at this point
+The V1 Authors transformer holds all the V1 Authors in memory and this endpoint gets the JSON for an author with a given UUID. The UUID is derived from the TME composite id at this point
 
-A successful GET results in a 200 and 404 for not finding the person
+A successful GET results in a 200 and 404 for not finding the author
 
 `curl -X GET https://{pub-semantic-user}:{pub-semantic-password}@semantic-up.ft.com/__v1-authors-transformer/transformers/authors/8138ca3f-b80d-3ef8-ad59-6a9b6ea5f15e`
 

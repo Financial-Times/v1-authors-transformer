@@ -22,7 +22,7 @@ import (
 )
 
 func main() {
-	app := cli.App("v1-people-transformer", "A RESTful API for transforming TME People to UP json")
+	app := cli.App("v1-authors-transformer", "A RESTful API for transforming TME Authors to UP json")
 	username := app.String(cli.StringOpt{
 		Name:   "tme-username",
 		Value:  "",

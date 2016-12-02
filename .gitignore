@@ -10,7 +10,8 @@
 *.html
 *coverage.*
 *.iml
-v1-people-transformer
+v1-authors-transformer
 .idea/
 *.db
 *.lock
+tmp*
