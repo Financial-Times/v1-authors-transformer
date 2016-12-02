@@ -1,4 +1,4 @@
-package people
+package authors
 
 import (
 	log "github.com/Sirupsen/logrus"

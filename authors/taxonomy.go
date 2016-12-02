@@ -1,4 +1,4 @@
-package people
+package authors
 
 type taxonomy struct {
 	Terms []term `xml:"term"`

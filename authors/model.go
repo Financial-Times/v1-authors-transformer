@@ -1,4 +1,4 @@
-package people
+package authors
 
 //model aligned with v2-people-transformer
 type person struct {

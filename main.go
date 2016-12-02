@@ -8,7 +8,7 @@ import (
 	"github.com/Financial-Times/service-status-go/gtg"
 	status "github.com/Financial-Times/service-status-go/httphandlers"
 	"github.com/Financial-Times/tme-reader/tmereader"
-	"github.com/Financial-Times/v1-people-transformer/people"
+	"github.com/Financial-Times/v1-authors-transformer/authors"
 	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
 	"github.com/jawher/mow.cli"
@@ -101,8 +101,8 @@ func main() {
 	app.Action = func() {
 		baseftrwapp.OutputMetricsIfRequired(*graphiteTCPAddress, *graphitePrefix, *logMetrics)
 		client := getResilientClient()
-		modelTransformer := new(people.PersonTransformer)
-		s := people.NewPeopleService(
+		modelTransformer := new(authors.PersonTransformer)
+		s := authors.NewPeopleService(
 			tmereader.NewTmeRepository(
 				client,
 				*tmeBaseURL,
@@ -119,7 +119,7 @@ func main() {
 			*maxRecords,
 			*cacheFileName)
 		defer s.Shutdown()
-		handler := people.NewPeopleHandler(s)
+		handler := authors.NewPeopleHandler(s)
 		router(handler)
 
 		log.Printf("listening on %d", *port)
@@ -131,7 +131,7 @@ func main() {
 	app.Run(os.Args)
 }
 
-func router(handler people.PeopleHandler) {
+func router(handler authors.PeopleHandler) {
 	servicesRouter := mux.NewRouter()
 
 	servicesRouter.HandleFunc("/transformers/authors", handler.GetPeople).Methods("GET")
