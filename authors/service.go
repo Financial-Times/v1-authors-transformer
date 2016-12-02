@@ -22,7 +22,7 @@ type AuthorService interface {
 	getAuthors() (io.PipeReader, error)
 	getAuthorLinks() (io.PipeReader, error)
 	getAuthorUUIDs() (io.PipeReader, error)
-	getAuthorByUUID(uuid string) (person, bool, error)
+	getAuthorByUUID(uuid string) (author, bool, error)
 	getCount() (int, error)
 	isInitialised() bool
 	isDataLoaded() bool
@@ -47,7 +47,7 @@ func NewAuthorService(repo tmereader.Repository, baseURL string, taxonomyName st
 	go func(service *authorServiceImpl) {
 		err := service.loadDB()
 		if err != nil {
-			log.Errorf("Error while creating PeopleService: [%v]", err.Error())
+			log.Errorf("Error while creating AuthorService: [%v]", err.Error())
 		}
 	}(s)
 	return s
@@ -143,7 +143,7 @@ func (s *authorServiceImpl) getAuthorUUIDs() (io.PipeReader, error) {
 				if k == nil {
 					break
 				}
-				pl := personUUID{UUID: string(k[:])}
+				pl := authorUUID{UUID: string(k[:])}
 				if err := encoder.Encode(pl); err != nil {
 					return err
 				}
@@ -171,7 +171,7 @@ func (s *authorServiceImpl) getAuthorLinks() (io.PipeReader, error) {
 				if k == nil {
 					break
 				}
-				pl := personLink{APIURL: s.baseURL + "/" + string(k[:])}
+				pl := authorLink{APIURL: s.baseURL + "/" + string(k[:])}
 				if err := encoder.Encode(pl); err != nil {
 					return err
 				}
@@ -186,7 +186,7 @@ func (s *authorServiceImpl) getAuthorLinks() (io.PipeReader, error) {
 	return *pv, nil
 }
 
-func (s *authorServiceImpl) getAuthorByUUID(uuid string) (person, bool, error) {
+func (s *authorServiceImpl) getAuthorByUUID(uuid string) (author, bool, error) {
 	s.RLock()
 	defer s.RUnlock()
 	var cachedValue []byte
@@ -201,19 +201,19 @@ func (s *authorServiceImpl) getAuthorByUUID(uuid string) (person, bool, error) {
 
 	if err != nil {
 		log.Errorf("ERROR reading from cache file for [%v]: %v", uuid, err.Error())
-		return person{}, false, err
+		return author{}, false, err
 	}
 	if len(cachedValue) == 0 {
 		log.Infof("INFO No cached value for [%v].", uuid)
-		return person{}, false, nil
+		return author{}, false, nil
 	}
 
-	var cachedPerson person
-	if err := json.Unmarshal(cachedValue, &cachedPerson); err != nil {
+	var cachedAuthor author
+	if err := json.Unmarshal(cachedValue, &cachedAuthor); err != nil {
 		log.Errorf("ERROR unmarshalling cached value for [%v]: %v.", uuid, err.Error())
-		return person{}, true, err
+		return author{}, true, err
 	}
-	return cachedPerson, true, nil
+	return cachedAuthor, true, nil
 }
 
 func (s *authorServiceImpl) openDB() error {
@@ -238,7 +238,7 @@ func (s *authorServiceImpl) reloadDB() error {
 func (s *authorServiceImpl) loadDB() error {
 	var wg sync.WaitGroup
 	log.Info("Loading DB...")
-	c := make(chan []person)
+	c := make(chan []author)
 	go s.processAuthors(c, &wg)
 	defer func(w *sync.WaitGroup) {
 		close(c)
@@ -268,30 +268,30 @@ func (s *authorServiceImpl) loadDB() error {
 	return nil
 }
 
-func (s *authorServiceImpl) processTerms(terms []interface{}, c chan<- []person) {
+func (s *authorServiceImpl) processTerms(terms []interface{}, c chan<- []author) {
 	log.Info("Processing terms...")
-	var cacheToBeWritten []person
+	var cacheToBeWritten []author
 	for _, iTerm := range terms {
 		t := iTerm.(term)
-		cacheToBeWritten = append(cacheToBeWritten, transformPerson(t, s.taxonomyName))
+		cacheToBeWritten = append(cacheToBeWritten, transformAuthor(t, s.taxonomyName))
 	}
 	c <- cacheToBeWritten
 }
 
-func (s *authorServiceImpl) processAuthors(c <-chan []person, wg *sync.WaitGroup) {
-	for people := range c {
-		log.Infof("Processing batch of %v authors.", len(people))
+func (s *authorServiceImpl) processAuthors(c <-chan []author, wg *sync.WaitGroup) {
+	for authors := range c {
+		log.Infof("Processing batch of %v authors.", len(authors))
 		if err := s.db.Batch(func(tx *bolt.Tx) error {
 			bucket := tx.Bucket([]byte(cacheBucket))
 			if bucket == nil {
 				return fmt.Errorf("Cache bucket [%v] not found!", cacheBucket)
 			}
-			for _, anPerson := range people {
-				marshalledPerson, err := json.Marshal(anPerson)
+			for _, anAuthor := range authors {
+				marshalledAuthor, err := json.Marshal(anAuthor)
 				if err != nil {
 					return err
 				}
-				err = bucket.Put([]byte(anPerson.UUID), marshalledPerson)
+				err = bucket.Put([]byte(anAuthor.UUID), marshalledAuthor)
 				if err != nil {
 					return err
 				}

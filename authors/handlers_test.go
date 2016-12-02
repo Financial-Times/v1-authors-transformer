@@ -23,13 +23,13 @@ import (
 const (
 	testUUID          = "bba39990-c78d-3629-ae83-808c333c6dbc"
 	testUUID2         = "be2e7e2b-0fa2-3969-a69b-74c46e754032"
-	getPeopleResponse = `{"uuid":"bba39990-c78d-3629-ae83-808c333c6dbc","prefLabel":"","type":"","alternativeIdentifiers":{}}
+	getAuthorResponse = `{"uuid":"bba39990-c78d-3629-ae83-808c333c6dbc","prefLabel":"","type":"","alternativeIdentifiers":{}}
 {"uuid":"be2e7e2b-0fa2-3969-a69b-74c46e754032","prefLabel":"","type":"","alternativeIdentifiers":{}}
 `
-	getPeopleByUUIDResponse = `{"ID":"bba39990-c78d-3629-ae83-808c333c6dbc"}
+	getAuthorUUIDsResponse = `{"ID":"bba39990-c78d-3629-ae83-808c333c6dbc"}
 {"ID":"be2e7e2b-0fa2-3969-a69b-74c46e754032"}
 `
-	getPersonByUUIDResponse = "{\"uuid\":\"bba39990-c78d-3629-ae83-808c333c6dbc\",\"prefLabel\":\"European Union\",\"type\":\"Organisation\",\"alternativeIdentifiers\":{\"TME\":[\"MTE3-U3ViamVjdHM=\"],\"uuids\":[\"bba39990-c78d-3629-ae83-808c333c6dbc\"]}}\n"
+	getAuthorByUUIDResponse = "{\"uuid\":\"bba39990-c78d-3629-ae83-808c333c6dbc\",\"prefLabel\":\"European Union\",\"type\":\"Organisation\",\"alternativeIdentifiers\":{\"TME\":[\"MTE3-U3ViamVjdHM=\"],\"uuids\":[\"bba39990-c78d-3629-ae83-808c333c6dbc\"]}}\n"
 )
 
 func TestHandlers(t *testing.T) {
@@ -47,16 +47,16 @@ func TestHandlers(t *testing.T) {
 			&dummyService{
 				found:       true,
 				initialised: true,
-				people:      []person{{UUID: testUUID, PrefLabel: "European Union", AlternativeIdentifiers: alternativeIdentifiers{Uuids: []string{testUUID}, TME: []string{"MTE3-U3ViamVjdHM="}}, Type: "Organisation"}}},
+				authors:      []author{{UUID: testUUID, PrefLabel: "European Union", AlternativeIdentifiers: alternativeIdentifiers{Uuids: []string{testUUID}, TME: []string{"MTE3-U3ViamVjdHM="}}, Type: "Organisation"}}},
 			http.StatusOK,
 			"application/json",
-			getPersonByUUIDResponse},
+			getAuthorByUUIDResponse},
 		{"Not found - get author by uuid",
 			newRequest("GET", fmt.Sprintf("/transformers/authors/%s", testUUID)),
 			&dummyService{
 				found:       false,
 				initialised: true,
-				people:      []person{{}}},
+				authors:      []author{{}}},
 			http.StatusNotFound,
 			"application/json",
 			"{\"message\": \"Author not found\"}\n"},
@@ -65,7 +65,7 @@ func TestHandlers(t *testing.T) {
 			&dummyService{
 				found:       false,
 				initialised: false,
-				people:      []person{}},
+				authors:      []author{}},
 			http.StatusServiceUnavailable,
 			"application/json",
 			"{\"message\": \"Service Unavailable\"}\n"},
@@ -75,7 +75,7 @@ func TestHandlers(t *testing.T) {
 				found:       true,
 				count:       1,
 				initialised: true,
-				people:      []person{{UUID: testUUID}}},
+				authors:      []author{{UUID: testUUID}}},
 			http.StatusOK,
 			"application/json",
 			"1"},
@@ -86,7 +86,7 @@ func TestHandlers(t *testing.T) {
 				found:       true,
 				count:       1,
 				initialised: true,
-				people:      []person{{UUID: testUUID}}},
+				authors:      []author{{UUID: testUUID}}},
 			http.StatusInternalServerError,
 			"application/json",
 			"{\"message\": \"Something broke\"}\n"},
@@ -97,7 +97,7 @@ func TestHandlers(t *testing.T) {
 				found:       true,
 				count:       1,
 				initialised: false,
-				people:      []person{{UUID: testUUID}}},
+				authors:      []author{{UUID: testUUID}}},
 			http.StatusServiceUnavailable,
 			"application/json", "{\"message\": \"Service Unavailable\"}\n"},
 		{"get authors - success",
@@ -106,16 +106,16 @@ func TestHandlers(t *testing.T) {
 				found:       true,
 				initialised: true,
 				count:       2,
-				people:      []person{{UUID: testUUID}, {UUID: testUUID2}}},
+				authors:      []author{{UUID: testUUID}, {UUID: testUUID2}}},
 			http.StatusOK,
 			"application/json",
-			getPeopleResponse},
+			getAuthorResponse},
 		{"get authors - Not found",
 			newRequest("GET", "/transformers/authors"),
 			&dummyService{
 				initialised: true,
 				count:       0,
-				people:      []person{}},
+				authors:      []author{}},
 			http.StatusNotFound,
 			"application/json",
 			"{\"message\": \"Authors not found\"}\n"},
@@ -124,7 +124,7 @@ func TestHandlers(t *testing.T) {
 			&dummyService{
 				found:       false,
 				initialised: false,
-				people:      []person{}},
+				authors:      []author{}},
 			http.StatusServiceUnavailable,
 			"application/json",
 			"{\"message\": \"Service Unavailable\"}\n"},
@@ -134,16 +134,16 @@ func TestHandlers(t *testing.T) {
 				found:       true,
 				initialised: true,
 				count:       1,
-				people:      []person{{UUID: testUUID}, {UUID: testUUID2}}},
+				authors:      []author{{UUID: testUUID}, {UUID: testUUID2}}},
 			http.StatusOK,
 			"application/json",
-			getPeopleByUUIDResponse},
+			getAuthorUUIDsResponse},
 		{"get authors IDS - Not found",
 			newRequest("GET", "/transformers/authors/__id"),
 			&dummyService{
 				initialised: true,
 				count:       0,
-				people:      []person{}},
+				authors:      []author{}},
 			http.StatusNotFound,
 			"application/json",
 			"{\"message\": \"Authors not found\"}\n"},
@@ -152,7 +152,7 @@ func TestHandlers(t *testing.T) {
 			&dummyService{
 				found:       false,
 				initialised: false,
-				people:      []person{}},
+				authors:      []author{}},
 			http.StatusServiceUnavailable,
 			"application/json",
 			"{\"message\": \"Service Unavailable\"}\n"},
@@ -161,7 +161,7 @@ func TestHandlers(t *testing.T) {
 			&dummyService{
 				found:       false,
 				initialised: false,
-				people:      []person{}},
+				authors:      []author{}},
 			http.StatusServiceUnavailable,
 			"application/json",
 			""},
@@ -277,7 +277,7 @@ func TestReloadIsCalled(t *testing.T) {
 		initialised: true,
 		dataLoaded:  true,
 		count:       2,
-		people:      []person{}}
+		authors:      []author{}}
 	log.Infof("s.loadDBCalled: %v", s.loadDBCalled)
 	router(s).ServeHTTP(rec, newRequest("POST", "/transformers/authors/__reload"))
 	wg.Wait()
@@ -294,7 +294,7 @@ func newRequest(method, url string) *http.Request {
 
 type dummyService struct {
 	found        bool
-	people       []person
+	authors      []author
 	initialised  bool
 	dataLoaded   bool
 	count        int
@@ -307,7 +307,7 @@ func (s *dummyService) getAuthors() (io.PipeReader, error) {
 	pv, pw := io.Pipe()
 	go func() {
 		encoder := json.NewEncoder(pw)
-		for _, sub := range s.people {
+		for _, sub := range s.authors {
 			encoder.Encode(sub)
 		}
 		pw.Close()
@@ -319,8 +319,8 @@ func (s *dummyService) getAuthorUUIDs() (io.PipeReader, error) {
 	pv, pw := io.Pipe()
 	go func() {
 		encoder := json.NewEncoder(pw)
-		for _, sub := range s.people {
-			encoder.Encode(personUUID{UUID: sub.UUID})
+		for _, sub := range s.authors {
+			encoder.Encode(authorUUID{UUID: sub.UUID})
 		}
 		pw.Close()
 	}()
@@ -330,9 +330,9 @@ func (s *dummyService) getAuthorUUIDs() (io.PipeReader, error) {
 func (s *dummyService) getAuthorLinks() (io.PipeReader, error) {
 	pv, pw := io.Pipe()
 	go func() {
-		var links []personLink
-		for _, sub := range s.people {
-			links = append(links, personLink{APIURL: "http://localhost:8080/transformers/authors/" + sub.UUID})
+		var links []authorLink
+		for _, sub := range s.authors {
+			links = append(links, authorLink{APIURL: "http://localhost:8080/transformers/authors/" + sub.UUID})
 		}
 		b, _ := json.Marshal(links)
 		log.Infof("Writing bytes... %v", string(b))
@@ -346,8 +346,8 @@ func (s *dummyService) getCount() (int, error) {
 	return s.count, s.err
 }
 
-func (s *dummyService) getAuthorByUUID(uuid string) (person, bool, error) {
-	return s.people[0], s.found, nil
+func (s *dummyService) getAuthorByUUID(uuid string) (author, bool, error) {
+	return s.authors[0], s.found, nil
 }
 
 func (s *dummyService) isInitialised() bool {

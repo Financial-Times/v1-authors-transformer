@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-type testSuiteForPeople struct {
+type testSuiteForAuthors struct {
 	name  string
 	uuid  string
 	found bool
@@ -26,7 +26,7 @@ func TestInit(t *testing.T) {
 	repo.Add(1)
 	tmpfile := getTempFile(t)
 	defer os.Remove(tmpfile.Name())
-	service := createTestPeopleService(&repo, tmpfile.Name())
+	service := createTestAuthorService(&repo, tmpfile.Name())
 	defer func() {
 		repo.Done()
 		service.Shutdown()
@@ -35,24 +35,24 @@ func TestInit(t *testing.T) {
 	assert.True(t, service.isInitialised())
 }
 
-func TestGetPeople(t *testing.T) {
+func TestGetAuthors(t *testing.T) {
 	tmpfile := getTempFile(t)
 	defer os.Remove(tmpfile.Name())
 	repo := dummyRepo{terms: []term{{CanonicalName: "Bob", RawID: "bob"}, {CanonicalName: "Fred", RawID: "fred"}}}
-	service := createTestPeopleService(&repo, tmpfile.Name())
+	service := createTestAuthorService(&repo, tmpfile.Name())
 	defer service.Shutdown()
 	waitTillInit(t, service)
 	waitTillDataLoaded(t, service)
 	pv, err := service.getAuthors()
 
 	var wg sync.WaitGroup
-	var res []person
+	var res []author
 	wg.Add(1)
 	go func(reader io.Reader, w *sync.WaitGroup) {
 		var err error
 		scan := bufio.NewScanner(reader)
 		for scan.Scan() {
-			var p person
+			var p author
 			assert.NoError(t, err)
 			err = json.Unmarshal(scan.Bytes(), &p)
 			assert.NoError(t, err)
@@ -68,24 +68,24 @@ func TestGetPeople(t *testing.T) {
 	assert.Equal(t, "be2e7e2b-0fa2-3969-a69b-74c46e754032", res[1].UUID)
 }
 
-func TestGetPeopleByUUID(t *testing.T) {
+func TestGetAuthorUUIDs(t *testing.T) {
 	tmpfile := getTempFile(t)
 	defer os.Remove(tmpfile.Name())
 	repo := dummyRepo{terms: []term{{CanonicalName: "Bob", RawID: "bob"}, {CanonicalName: "Fred", RawID: "fred"}}}
-	service := createTestPeopleService(&repo, tmpfile.Name())
+	service := createTestAuthorService(&repo, tmpfile.Name())
 	defer service.Shutdown()
 	waitTillInit(t, service)
 	waitTillDataLoaded(t, service)
 	pv, err := service.getAuthorUUIDs()
 
 	var wg sync.WaitGroup
-	var res []personUUID
+	var res []authorUUID
 	wg.Add(1)
 	go func(reader io.Reader, w *sync.WaitGroup) {
 		var err error
 		scan := bufio.NewScanner(reader)
 		for scan.Scan() {
-			var p personUUID
+			var p authorUUID
 			assert.NoError(t, err)
 			err = json.Unmarshal(scan.Bytes(), &p)
 			assert.NoError(t, err)
@@ -101,18 +101,18 @@ func TestGetPeopleByUUID(t *testing.T) {
 	assert.Equal(t, "be2e7e2b-0fa2-3969-a69b-74c46e754032", res[1].UUID)
 }
 
-func TestGetPeopleLink(t *testing.T) {
+func TestGetAuthorLinks(t *testing.T) {
 	tmpfile := getTempFile(t)
 	defer os.Remove(tmpfile.Name())
 	repo := dummyRepo{terms: []term{{CanonicalName: "Bob", RawID: "bob"}, {CanonicalName: "Fred", RawID: "fred"}}}
-	service := createTestPeopleService(&repo, tmpfile.Name())
+	service := createTestAuthorService(&repo, tmpfile.Name())
 	defer service.Shutdown()
 	waitTillInit(t, service)
 	waitTillDataLoaded(t, service)
 	pv, err := service.getAuthorLinks()
 
 	var wg sync.WaitGroup
-	var res []personLink
+	var res []authorLink
 	wg.Add(1)
 	go func(reader io.Reader, w *sync.WaitGroup) {
 		var err error
@@ -135,7 +135,7 @@ func TestGetCount(t *testing.T) {
 	tmpfile := getTempFile(t)
 	defer os.Remove(tmpfile.Name())
 	repo := dummyRepo{terms: []term{{CanonicalName: "Bob", RawID: "bob"}, {CanonicalName: "Fred", RawID: "fred"}}}
-	service := createTestPeopleService(&repo, tmpfile.Name())
+	service := createTestAuthorService(&repo, tmpfile.Name())
 	defer service.Shutdown()
 	waitTillInit(t, service)
 	waitTillDataLoaded(t, service)
@@ -146,7 +146,7 @@ func TestReload(t *testing.T) {
 	tmpfile := getTempFile(t)
 	defer os.Remove(tmpfile.Name())
 	repo := dummyRepo{terms: []term{{CanonicalName: "Bob", RawID: "bob"}, {CanonicalName: "Fred", RawID: "fred"}}}
-	service := createTestPeopleService(&repo, tmpfile.Name())
+	service := createTestAuthorService(&repo, tmpfile.Name())
 	defer service.Shutdown()
 	waitTillInit(t, service)
 	waitTillDataLoaded(t, service)
@@ -159,25 +159,25 @@ func TestReload(t *testing.T) {
 	assertCount(t, service, 3)
 }
 
-func TestGetPersonByUUID(t *testing.T) {
+func TestGetAuthorByUUID(t *testing.T) {
 	tmpfile := getTempFile(t)
 	defer os.Remove(tmpfile.Name())
 	repo := dummyRepo{terms: []term{{CanonicalName: "Bob", RawID: "bob"}, {CanonicalName: "Fred", RawID: "fred"}}}
-	service := createTestPeopleService(&repo, tmpfile.Name())
+	service := createTestAuthorService(&repo, tmpfile.Name())
 	defer service.Shutdown()
 	waitTillInit(t, service)
 	waitTillDataLoaded(t, service)
 
-	tests := []testSuiteForPeople{
+	tests := []testSuiteForAuthors{
 		{"Success", "28d66fcc-bb56-363d-80c1-f2d957ef58cf", true, nil},
 		{"Success", "xxxxxxxx-bb56-363d-80c1-f2d957ef58cf", false, nil}}
 	for _, test := range tests {
-		person, found, err := service.getAuthorByUUID(test.uuid)
+		author, found, err := service.getAuthorByUUID(test.uuid)
 		if test.err != nil {
 			assert.Equal(t, test.err, err)
 		} else if test.found {
 			assert.True(t, found)
-			assert.NotNil(t, person)
+			assert.NotNil(t, author)
 		} else {
 			assert.False(t, found)
 		}
@@ -187,7 +187,7 @@ func TestGetPersonByUUID(t *testing.T) {
 func TestFailingOpeningDB(t *testing.T) {
 	dir, err := ioutil.TempDir("", "service_test")
 	assert.NoError(t, err)
-	service := createTestPeopleService(&dummyRepo{}, dir)
+	service := createTestAuthorService(&dummyRepo{}, dir)
 	defer service.Shutdown()
 	for i := 1; i <= 1000; i++ {
 		if !service.isInitialised() {
@@ -205,7 +205,7 @@ func assertCount(t *testing.T, s AuthorService, expected int) {
 	assert.Equal(t, expected, count)
 }
 
-func createTestPeopleService(repo tmereader.Repository, cacheFileName string) AuthorService {
+func createTestAuthorService(repo tmereader.Repository, cacheFileName string) AuthorService {
 	return NewAuthorService(repo, "/base/url", "taxonomy_string", 1, cacheFileName)
 }
 

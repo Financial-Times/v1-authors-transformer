@@ -20,7 +20,7 @@ func TestTransformPerson(t *testing.T) {
 				{Name: "b"},
 			}},
 	}
-	tfp := transformPerson(testTerm, taxonomyName)
+	tfp := transformAuthor(testTerm, taxonomyName)
 	log.Infof("got person %v", tfp)
 	assert.NotNil(t, tfp)
 	assert.Len(t, tfp.Aliases, 2)

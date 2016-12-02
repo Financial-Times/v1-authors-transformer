@@ -9,11 +9,11 @@ import (
 type PersonTransformer struct {
 }
 
-func transformPerson(tmeTerm term, taxonomyName string) person {
+func transformAuthor(tmeTerm term, taxonomyName string) author {
 	tmeIdentifier := buildTmeIdentifier(tmeTerm.RawID, taxonomyName)
 	personUUID := uuid.NewMD5(uuid.UUID{}, []byte(tmeIdentifier)).String()
 	aliasList := buildAliasList(tmeTerm.Aliases)
-	return person{
+	return author{
 		UUID:      personUUID,
 		PrefLabel: tmeTerm.CanonicalName,
 		AlternativeIdentifiers: alternativeIdentifiers{

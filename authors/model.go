@@ -1,7 +1,7 @@
 package authors
 
-//model aligned with v2-people-transformer
-type person struct {
+//model aligned with v2-authors-transformer
+type author struct {
 	UUID                   string                 `json:"uuid"`
 	PrefLabel              string                 `json:"prefLabel"`
 	Type                   string                 `json:"type"`
@@ -14,10 +14,10 @@ type alternativeIdentifiers struct {
 	Uuids []string `json:"uuids,omitempty"`
 }
 
-type personLink struct {
+type authorLink struct {
 	APIURL string `json:"apiUrl"`
 }
 
-type personUUID struct {
+type authorUUID struct {
 	UUID string `json:"ID"`
 }
