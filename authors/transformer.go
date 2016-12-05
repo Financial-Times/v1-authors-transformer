@@ -7,7 +7,32 @@ import (
 	"github.com/pborman/uuid"
 )
 
+// AuthorTransformer struct
 type AuthorTransformer struct {
+}
+
+// UnMarshallTaxonomy - unmarshal the XML of a taxonomy
+func (*AuthorTransformer) UnMarshallTaxonomy(contents []byte) ([]interface{}, error) {
+	t := taxonomy{}
+	err := xml.Unmarshal(contents, &t)
+	if err != nil {
+		return nil, err
+	}
+	interfaces := make([]interface{}, len(t.Terms))
+	for i, d := range t.Terms {
+		interfaces[i] = d
+	}
+	return interfaces, nil
+}
+
+// UnMarshallTerm - unmarshal the XML of a TME term
+func (*AuthorTransformer) UnMarshallTerm(content []byte) (interface{}, error) {
+	dummyTerm := term{}
+	err := xml.Unmarshal(content, &dummyTerm)
+	if err != nil {
+		return term{}, err
+	}
+	return dummyTerm, nil
 }
 
 func transformAuthor(tmeTerm term, taxonomyName string) author {
@@ -38,26 +63,4 @@ func buildAliasList(aList aliases) []string {
 		aliasList[k] = v.Name
 	}
 	return aliasList
-}
-
-func (*AuthorTransformer) UnMarshallTaxonomy(contents []byte) ([]interface{}, error) {
-	t := taxonomy{}
-	err := xml.Unmarshal(contents, &t)
-	if err != nil {
-		return nil, err
-	}
-	interfaces := make([]interface{}, len(t.Terms))
-	for i, d := range t.Terms {
-		interfaces[i] = d
-	}
-	return interfaces, nil
-}
-
-func (*AuthorTransformer) UnMarshallTerm(content []byte) (interface{}, error) {
-	dummyTerm := term{}
-	err := xml.Unmarshal(content, &dummyTerm)
-	if err != nil {
-		return term{}, err
-	}
-	return dummyTerm, nil
 }

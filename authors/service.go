@@ -18,8 +18,6 @@ import (
 
 const (
 	cacheBucket = "author"
-	//uppAuthority = "http://api.ft.com/system/FT-UPP"
-	//tmeAuthority = "http://api.ft.com/system/FT-TME"
 )
 
 type AuthorService interface {
