@@ -4,12 +4,16 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"sync"
+	"time"
+
 	"github.com/Financial-Times/tme-reader/tmereader"
 	log "github.com/Sirupsen/logrus"
 	"github.com/boltdb/bolt"
-	"io"
-	"sync"
-	"time"
+	"github.com/jaytaylor/html2text"
+	"github.com/pborman/uuid"
 )
 
 const (
@@ -40,15 +44,22 @@ type authorServiceImpl struct {
 	dataLoaded    bool
 	cacheFileName string
 	db            *bolt.DB
+	berthaURL     string
 }
 
-func NewAuthorService(repo tmereader.Repository, baseURL string, taxonomyName string, maxTmeRecords int, cacheFileName string) AuthorService {
-	s := &authorServiceImpl{repository: repo, baseURL: baseURL, taxonomyName: taxonomyName, maxTmeRecords: maxTmeRecords, initialised: true, cacheFileName: cacheFileName}
+func NewAuthorService(repo tmereader.Repository, baseURL string, taxonomyName string, maxTmeRecords int, cacheFileName string, berthaURL string) AuthorService {
+	s := &authorServiceImpl{repository: repo, baseURL: baseURL, taxonomyName: taxonomyName, maxTmeRecords: maxTmeRecords, initialised: true, cacheFileName: cacheFileName, berthaURL: berthaURL}
 	go func(service *authorServiceImpl) {
 		err := service.loadDB()
 		if err != nil {
 			log.Errorf("Error while creating AuthorService: [%v]", err.Error())
 		}
+
+		err = service.loadCuratedAuthors()
+		if err != nil {
+			log.Errorf("Error while loading in the curated authors: [%v]", err.Error())
+		}
+
 	}(s)
 	return s
 }
@@ -321,4 +332,95 @@ func (s *authorServiceImpl) createCacheBucket() error {
 		_, err := tx.CreateBucket([]byte(cacheBucket))
 		return err
 	})
+}
+
+func (s *authorServiceImpl) loadCuratedAuthors() error {
+	res, err := http.Get(s.berthaURL)
+	if err != nil {
+		return err
+	}
+
+	var bAuthors []berthaAuthor
+	err = json.NewDecoder(res.Body).Decode(&bAuthors)
+	if err != nil {
+		return err
+	}
+	err = s.db.Batch(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket([]byte(cacheBucket))
+		if bucket == nil {
+			return fmt.Errorf("Cache bucket [%v] not found!", cacheBucket)
+		}
+
+		for _, b := range bAuthors {
+			berthaUUID := uuid.NewMD5(uuid.UUID{}, []byte(b.TmeIdentifier)).String()
+			cachedAuthor := bucket.Get([]byte(berthaUUID))
+			var a author
+			if cachedAuthor == nil {
+				log.Warnf("Curated author %s [%s] was not found in cache.  Adding without V1 information.", b.Name, berthaUUID)
+				a, _ = berthaToAuthor(b)
+			} else {
+				json.Unmarshal(cachedAuthor, &a)
+				a, _ = addBerthaInformation(a, b)
+			}
+
+			newCachedVersion, _ := json.Marshal(a)
+			bucket.Put([]byte(berthaUUID), newCachedVersion)
+		}
+
+		return nil
+	})
+
+	return err
+}
+
+func addBerthaInformation(a author, b berthaAuthor) (author, error) {
+	berthaUUID := uuid.NewMD5(uuid.UUID{}, []byte(b.TmeIdentifier)).String()
+	if berthaUUID != a.UUID {
+		return a, errors.New("Bertha UUID doesn't match author UUID")
+	}
+	plainDescription, err := html2text.FromString(b.Biography)
+	if err != nil {
+		return a, err
+	}
+	a.Name = b.Name
+	a.PrefLabel = b.Name
+	a.EmailAddress = b.Email
+	a.TwitterHandle = b.TwitterHandle
+	a.FacebookProfile = b.FacebookProfile
+	a.LinkedinProfile = b.LinkedinProfile
+	a.Description = plainDescription
+	a.DescriptionXML = b.Biography
+	a.ImageURL = b.ImageURL
+
+	return a, nil
+}
+
+func berthaToAuthor(a berthaAuthor) (author, error) {
+	uuid := uuid.NewMD5(uuid.UUID{}, []byte(a.TmeIdentifier)).String()
+	plainDescription, err := html2text.FromString(a.Biography)
+
+	if err != nil {
+		return author{}, err
+	}
+
+	altIds := alternativeIdentifiers{
+		UUIDs: []string{uuid},
+		TME:   []string{a.TmeIdentifier},
+	}
+
+	p := author{
+		UUID:                   uuid,
+		Name:                   a.Name,
+		PrefLabel:              a.Name,
+		EmailAddress:           a.Email,
+		TwitterHandle:          a.TwitterHandle,
+		FacebookProfile:        a.FacebookProfile,
+		LinkedinProfile:        a.LinkedinProfile,
+		Description:            plainDescription,
+		DescriptionXML:         a.Biography,
+		ImageURL:               a.ImageURL,
+		AlternativeIdentifiers: altIds,
+	}
+
+	return p, err
 }

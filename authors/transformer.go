@@ -3,6 +3,7 @@ package authors
 import (
 	"encoding/base64"
 	"encoding/xml"
+
 	"github.com/pborman/uuid"
 )
 
@@ -18,7 +19,7 @@ func transformAuthor(tmeTerm term, taxonomyName string) author {
 		PrefLabel: tmeTerm.CanonicalName,
 		AlternativeIdentifiers: alternativeIdentifiers{
 			TME:   []string{tmeIdentifier},
-			Uuids: []string{authorUUID},
+			UUIDs: []string{authorUUID},
 		},
 		Type:    "Person",
 		Aliases: aliasList,
