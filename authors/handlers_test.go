@@ -47,7 +47,7 @@ func TestHandlers(t *testing.T) {
 			&dummyService{
 				found:       true,
 				initialised: true,
-				authors:      []author{{UUID: testUUID, PrefLabel: "European Union", AlternativeIdentifiers: alternativeIdentifiers{Uuids: []string{testUUID}, TME: []string{"MTE3-U3ViamVjdHM="}}, Type: "Organisation"}}},
+				authors:     []author{{UUID: testUUID, PrefLabel: "European Union", AlternativeIdentifiers: alternativeIdentifiers{Uuids: []string{testUUID}, TME: []string{"MTE3-U3ViamVjdHM="}}, Type: "Organisation"}}},
 			http.StatusOK,
 			"application/json",
 			getAuthorByUUIDResponse},
@@ -56,7 +56,7 @@ func TestHandlers(t *testing.T) {
 			&dummyService{
 				found:       false,
 				initialised: true,
-				authors:      []author{{}}},
+				authors:     []author{{}}},
 			http.StatusNotFound,
 			"application/json",
 			"{\"message\": \"Author not found\"}\n"},
@@ -65,7 +65,7 @@ func TestHandlers(t *testing.T) {
 			&dummyService{
 				found:       false,
 				initialised: false,
-				authors:      []author{}},
+				authors:     []author{}},
 			http.StatusServiceUnavailable,
 			"application/json",
 			"{\"message\": \"Service Unavailable\"}\n"},
@@ -75,7 +75,7 @@ func TestHandlers(t *testing.T) {
 				found:       true,
 				count:       1,
 				initialised: true,
-				authors:      []author{{UUID: testUUID}}},
+				authors:     []author{{UUID: testUUID}}},
 			http.StatusOK,
 			"application/json",
 			"1"},
@@ -86,7 +86,7 @@ func TestHandlers(t *testing.T) {
 				found:       true,
 				count:       1,
 				initialised: true,
-				authors:      []author{{UUID: testUUID}}},
+				authors:     []author{{UUID: testUUID}}},
 			http.StatusInternalServerError,
 			"application/json",
 			"{\"message\": \"Something broke\"}\n"},
@@ -97,7 +97,7 @@ func TestHandlers(t *testing.T) {
 				found:       true,
 				count:       1,
 				initialised: false,
-				authors:      []author{{UUID: testUUID}}},
+				authors:     []author{{UUID: testUUID}}},
 			http.StatusServiceUnavailable,
 			"application/json", "{\"message\": \"Service Unavailable\"}\n"},
 		{"get authors - success",
@@ -106,7 +106,7 @@ func TestHandlers(t *testing.T) {
 				found:       true,
 				initialised: true,
 				count:       2,
-				authors:      []author{{UUID: testUUID}, {UUID: testUUID2}}},
+				authors:     []author{{UUID: testUUID}, {UUID: testUUID2}}},
 			http.StatusOK,
 			"application/json",
 			getAuthorResponse},
@@ -115,7 +115,7 @@ func TestHandlers(t *testing.T) {
 			&dummyService{
 				initialised: true,
 				count:       0,
-				authors:      []author{}},
+				authors:     []author{}},
 			http.StatusNotFound,
 			"application/json",
 			"{\"message\": \"Authors not found\"}\n"},
@@ -124,7 +124,7 @@ func TestHandlers(t *testing.T) {
 			&dummyService{
 				found:       false,
 				initialised: false,
-				authors:      []author{}},
+				authors:     []author{}},
 			http.StatusServiceUnavailable,
 			"application/json",
 			"{\"message\": \"Service Unavailable\"}\n"},
@@ -134,7 +134,7 @@ func TestHandlers(t *testing.T) {
 				found:       true,
 				initialised: true,
 				count:       1,
-				authors:      []author{{UUID: testUUID}, {UUID: testUUID2}}},
+				authors:     []author{{UUID: testUUID}, {UUID: testUUID2}}},
 			http.StatusOK,
 			"application/json",
 			getAuthorUUIDsResponse},
@@ -143,7 +143,7 @@ func TestHandlers(t *testing.T) {
 			&dummyService{
 				initialised: true,
 				count:       0,
-				authors:      []author{}},
+				authors:     []author{}},
 			http.StatusNotFound,
 			"application/json",
 			"{\"message\": \"Authors not found\"}\n"},
@@ -152,7 +152,7 @@ func TestHandlers(t *testing.T) {
 			&dummyService{
 				found:       false,
 				initialised: false,
-				authors:      []author{}},
+				authors:     []author{}},
 			http.StatusServiceUnavailable,
 			"application/json",
 			"{\"message\": \"Service Unavailable\"}\n"},
@@ -161,7 +161,7 @@ func TestHandlers(t *testing.T) {
 			&dummyService{
 				found:       false,
 				initialised: false,
-				authors:      []author{}},
+				authors:     []author{}},
 			http.StatusServiceUnavailable,
 			"application/json",
 			""},
@@ -277,7 +277,7 @@ func TestReloadIsCalled(t *testing.T) {
 		initialised: true,
 		dataLoaded:  true,
 		count:       2,
-		authors:      []author{}}
+		authors:     []author{}}
 	log.Infof("s.loadDBCalled: %v", s.loadDBCalled)
 	router(s).ServeHTTP(rec, newRequest("POST", "/transformers/authors/__reload"))
 	wg.Wait()
