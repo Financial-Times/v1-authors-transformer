@@ -20,6 +20,7 @@ const (
 	cacheBucket = "author"
 )
 
+// AuthorService - interface for retrieving v1 authors
 type AuthorService interface {
 	getAuthors() (io.PipeReader, error)
 	getAuthorLinks() (io.PipeReader, error)
@@ -45,6 +46,7 @@ type authorServiceImpl struct {
 	berthaURL     string
 }
 
+// NewAuthorService - create a new AuthorService
 func NewAuthorService(repo tmereader.Repository, baseURL string, taxonomyName string, maxTmeRecords int, cacheFileName string, berthaURL string) AuthorService {
 	s := &authorServiceImpl{repository: repo, baseURL: baseURL, taxonomyName: taxonomyName, maxTmeRecords: maxTmeRecords, initialised: true, cacheFileName: cacheFileName, berthaURL: berthaURL}
 	go func(service *authorServiceImpl) {

@@ -3,15 +3,16 @@ package authors
 import (
 	"bufio"
 	"encoding/json"
-	"github.com/Financial-Times/tme-reader/tmereader"
-	log "github.com/Sirupsen/logrus"
-	"github.com/stretchr/testify/assert"
 	"io"
 	"io/ioutil"
 	"os"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/Financial-Times/tme-reader/tmereader"
+	log "github.com/Sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
 )
 
 type testSuiteForAuthors struct {
@@ -206,7 +207,7 @@ func assertCount(t *testing.T, s AuthorService, expected int) {
 }
 
 func createTestAuthorService(repo tmereader.Repository, cacheFileName string) AuthorService {
-	return NewAuthorService(repo, "/base/url", "taxonomy_string", 1, cacheFileName)
+	return NewAuthorService(repo, "/base/url", "taxonomy_string", 1, cacheFileName, "/bertha/url")
 }
 
 func getTempFile(t *testing.T) *os.File {
