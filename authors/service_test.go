@@ -281,3 +281,94 @@ func (d *blockingRepo) GetTmeTermsFromIndex(startRecord int) ([]interface{}, err
 func (d *blockingRepo) GetTmeTermById(uuid string) (interface{}, error) {
 	return nil, nil
 }
+
+func TestBerthaToAuthor(t *testing.T) {
+	testAuthor := berthaAuthor{
+		Name:            "Terry",
+		Email:           "terry@orange.com",
+		TwitterHandle:   "@terryorange",
+		FacebookProfile: "/terryorange",
+		LinkedinProfile: "terryorange",
+		Biography:       "<h1>A test biography</h1>",
+		ImageURL:        "image-of-terry.jpg",
+		TmeIdentifier:   "1234567890",
+	}
+	expectedAuthor := author{
+		UUID:            "e807f1fc-f82d-332f-9bb0-18ca6738a19f",
+		Name:            "Terry",
+		PrefLabel:       "Terry",
+		EmailAddress:    "terry@orange.com",
+		TwitterHandle:   "@terryorange",
+		FacebookProfile: "/terryorange",
+		LinkedinProfile: "terryorange",
+		Description:     "****************\nA test biography\n****************",
+		DescriptionXML:  "<h1>A test biography</h1>",
+		ImageURL:        "image-of-terry.jpg",
+		AlternativeIdentifiers: alternativeIdentifiers{
+			UUIDs: []string{"e807f1fc-f82d-332f-9bb0-18ca6738a19f"},
+			TME:   []string{"1234567890"},
+		},
+	}
+
+	actualAuthor, err := berthaToAuthor(testAuthor)
+	assert.Equal(t, expectedAuthor, actualAuthor)
+	assert.Nil(t, err)
+}
+
+func TestBadAddBertha(t *testing.T) {
+	testAuthor := berthaAuthor{
+		Name:            "Terry",
+		Email:           "terry@orange.com",
+		TwitterHandle:   "@terryorange",
+		FacebookProfile: "/terryorange",
+		LinkedinProfile: "terryorange",
+		Biography:       "<h1>A test biography</h1>",
+		ImageURL:        "image-of-terry.jpg",
+		TmeIdentifier:   "1234567890",
+	}
+	emptyAuthor := author{}
+
+	_, err := addBerthaInformation(emptyAuthor, testAuthor)
+	assert.EqualError(t, err, "Bertha UUID doesn't match author UUID")
+}
+
+func TestGoodAddBertha(t *testing.T) {
+	testAuthor := berthaAuthor{
+		Name:            "Terry",
+		Email:           "terry@orange.com",
+		TwitterHandle:   "@terryorange",
+		FacebookProfile: "/terryorange",
+		LinkedinProfile: "terryorange",
+		Biography:       "<h1>A test biography</h1>",
+		ImageURL:        "image-of-terry.jpg",
+		TmeIdentifier:   "1234567890",
+	}
+	emptyAuthor := author{
+		UUID: "e807f1fc-f82d-332f-9bb0-18ca6738a19f",
+		Name: "Fred Black",
+		AlternativeIdentifiers: alternativeIdentifiers{
+			UUIDs: []string{"e807f1fc-f82d-332f-9bb0-18ca6738a19f"},
+			TME:   []string{"1234567890"},
+		},
+	}
+	expectedAuthor := author{
+		UUID:            "e807f1fc-f82d-332f-9bb0-18ca6738a19f",
+		Name:            "Terry",
+		PrefLabel:       "Terry",
+		EmailAddress:    "terry@orange.com",
+		TwitterHandle:   "@terryorange",
+		FacebookProfile: "/terryorange",
+		LinkedinProfile: "terryorange",
+		Description:     "****************\nA test biography\n****************",
+		DescriptionXML:  "<h1>A test biography</h1>",
+		ImageURL:        "image-of-terry.jpg",
+		AlternativeIdentifiers: alternativeIdentifiers{
+			UUIDs: []string{"e807f1fc-f82d-332f-9bb0-18ca6738a19f"},
+			TME:   []string{"1234567890"},
+		},
+	}
+
+	actualAuthor, err := addBerthaInformation(emptyAuthor, testAuthor)
+	assert.Equal(t, expectedAuthor, actualAuthor)
+	assert.Nil(t, err)
+}
