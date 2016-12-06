@@ -57,14 +57,6 @@ func buildTmeIdentifier(rawID string, tmeTermTaxonomyName string) string {
 	return id + "-" + taxonomyName
 }
 
-// func buildAliasList(aList aliases) []string {
-// 	aliasList := make([]string, len(aList.Alias))
-// 	for k, v := range aList.Alias {
-// 		aliasList[k] = v.Name
-// 	}
-// 	return aliasList
-// }
-
 func removeDuplicates(slice []string) []string {
 	newSlice := []string{}
 	seen := make(map[string]bool)
