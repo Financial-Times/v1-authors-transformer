@@ -23,9 +23,9 @@ TME credentials are mandatory and can be found in lastpass
 
 ### With Docker:
 
-`docker build -t coco/v1-orgs-transformer .`
+`docker build -t coco/v1-authors-transformer .`
 
-`docker run -ti --env BASE_URL=<base url> --env BERTHA_SERVICE_URL=<bertha url> --env TME_BASE_URL=<structure service url> --env TME_USERNAME=<user> --env TME_PASSWORD=<pass> --env TOKEN=<token> --env CACHE_FILE_NAME=<file> coco/v1-orgs-transformer`
+`docker run -ti --env BASE_URL=<base url> --env BERTHA_SERVICE_URL=<bertha url> --env TME_BASE_URL=<structure service url> --env TME_USERNAME=<user> --env TME_PASSWORD=<pass> --env TOKEN=<token> --env CACHE_FILE_NAME=<file> coco/v1-authors-transformer`
 
 ## Endpoints
 
