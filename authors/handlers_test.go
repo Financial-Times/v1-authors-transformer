@@ -4,12 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/Financial-Times/go-fthealth/v1a"
-	"github.com/Financial-Times/service-status-go/gtg"
-	status "github.com/Financial-Times/service-status-go/httphandlers"
-	log "github.com/Sirupsen/logrus"
-	"github.com/gorilla/mux"
-	"github.com/stretchr/testify/assert"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -18,6 +12,13 @@ import (
 	"strings"
 	"sync"
 	"testing"
+
+	"github.com/Financial-Times/go-fthealth/v1a"
+	"github.com/Financial-Times/service-status-go/gtg"
+	status "github.com/Financial-Times/service-status-go/httphandlers"
+	log "github.com/Sirupsen/logrus"
+	"github.com/gorilla/mux"
+	"github.com/stretchr/testify/assert"
 )
 
 const (
@@ -47,7 +48,7 @@ func TestHandlers(t *testing.T) {
 			&dummyService{
 				found:       true,
 				initialised: true,
-				authors:     []author{{UUID: testUUID, PrefLabel: "European Union", AlternativeIdentifiers: alternativeIdentifiers{Uuids: []string{testUUID}, TME: []string{"MTE3-U3ViamVjdHM="}}, Type: "Organisation"}}},
+				authors:     []author{{UUID: testUUID, PrefLabel: "European Union", AlternativeIdentifiers: alternativeIdentifiers{UUIDs: []string{testUUID}, TME: []string{"MTE3-U3ViamVjdHM="}}, Type: "Organisation"}}},
 			http.StatusOK,
 			"application/json",
 			getAuthorByUUIDResponse},
@@ -301,6 +302,10 @@ type dummyService struct {
 	err          error
 	loadDBCalled bool
 	wg           *sync.WaitGroup
+}
+
+func (s *dummyService) loadCuratedAuthors(bAuthors []berthaAuthor) error {
+	return nil
 }
 
 func (s *dummyService) getAuthors() (io.PipeReader, error) {

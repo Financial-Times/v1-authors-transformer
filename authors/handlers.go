@@ -4,23 +4,27 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"strconv"
+
 	"github.com/Financial-Times/go-fthealth/v1a"
 	"github.com/Financial-Times/service-status-go/gtg"
 	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
-	"io"
-	"net/http"
-	"strconv"
 )
 
+// AuthorHandler - struct for the handlers
 type AuthorHandler struct {
 	service AuthorService
 }
 
+// NewAuthorHandler - Create a new AuthorHandler
 func NewAuthorHandler(service AuthorService) AuthorHandler {
 	return AuthorHandler{service}
 }
 
+// GetAuthors - Return a JSON encoded list of all authors
 func (h *AuthorHandler) GetAuthors(writer http.ResponseWriter, req *http.Request) {
 	writer.Header().Add("Content-Type", "application/json")
 	if !h.service.isInitialised() {
@@ -44,6 +48,7 @@ func (h *AuthorHandler) GetAuthors(writer http.ResponseWriter, req *http.Request
 	io.Copy(writer, &pv)
 }
 
+// GetAuthorUUIDs - Get a list of JSON objects (not a JSON list) giving each id.
 func (h *AuthorHandler) GetAuthorUUIDs(writer http.ResponseWriter, req *http.Request) {
 	writer.Header().Add("Content-Type", "application/json")
 	if !h.service.isInitialised() {
@@ -67,6 +72,7 @@ func (h *AuthorHandler) GetAuthorUUIDs(writer http.ResponseWriter, req *http.Req
 	io.Copy(writer, &pv)
 }
 
+// GetCount - Get a count of the number of available authors
 func (h *AuthorHandler) GetCount(writer http.ResponseWriter, req *http.Request) {
 	if !h.service.isInitialised() {
 		writer.Header().Add("Content-Type", "application/json")
@@ -82,6 +88,7 @@ func (h *AuthorHandler) GetCount(writer http.ResponseWriter, req *http.Request) 
 	writer.Write([]byte(strconv.Itoa(count)))
 }
 
+// HealthCheck - Return FT standard healthcheck
 func (h *AuthorHandler) HealthCheck() v1a.Check {
 
 	return v1a.Check{
@@ -99,6 +106,7 @@ func (h *AuthorHandler) HealthCheck() v1a.Check {
 	}
 }
 
+// G2GCheck - Return FT standard good-to-go check
 func (h *AuthorHandler) G2GCheck() gtg.Status {
 	count, err := h.service.getCount()
 	if h.service.isInitialised() && err == nil && count > 0 {
@@ -107,6 +115,7 @@ func (h *AuthorHandler) G2GCheck() gtg.Status {
 	return gtg.Status{GoodToGo: false}
 }
 
+// GetAuthorByUUID - Return the JSON for a single author
 func (h *AuthorHandler) GetAuthorByUUID(writer http.ResponseWriter, req *http.Request) {
 	writer.Header().Add("Content-Type", "application/json")
 	if !h.service.isInitialised() {
@@ -124,6 +133,7 @@ func (h *AuthorHandler) GetAuthorByUUID(writer http.ResponseWriter, req *http.Re
 	writeJSONResponse(obj, found, writer)
 }
 
+// Reload - Reload the cache with fresh information
 func (h *AuthorHandler) Reload(writer http.ResponseWriter, req *http.Request) {
 	if !h.service.isInitialised() || !h.service.isDataLoaded() {
 		writeStatusServiceUnavailable(writer)

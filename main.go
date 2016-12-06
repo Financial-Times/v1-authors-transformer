@@ -2,6 +2,12 @@ package main
 
 import (
 	"fmt"
+	"net"
+	"net/http"
+	_ "net/http/pprof"
+	"os"
+	"time"
+
 	"github.com/Financial-Times/base-ft-rw-app-go/baseftrwapp"
 	"github.com/Financial-Times/go-fthealth/v1a"
 	"github.com/Financial-Times/http-handlers-go/httphandlers"
@@ -14,11 +20,6 @@ import (
 	"github.com/jawher/mow.cli"
 	"github.com/rcrowley/go-metrics"
 	"github.com/sethgrid/pester"
-	"net"
-	"net/http"
-	_ "net/http/pprof"
-	"os"
-	"time"
 )
 
 func main() {
@@ -95,6 +96,11 @@ func main() {
 		Desc:   "Whether to log metrics. Set to true if running locally and you want metrics output",
 		EnvVar: "LOG_METRICS",
 	})
+	berthaSrcURL := app.String(cli.StringOpt{
+		Name:   "berthaSourceURL",
+		Desc:   "The URL of the Bertha Authors JSON source",
+		EnvVar: "BERTHA_SOURCE_URL",
+	})
 
 	tmeTaxonomyName := "Authors"
 
@@ -117,7 +123,8 @@ func main() {
 			*baseURL,
 			tmeTaxonomyName,
 			*maxRecords,
-			*cacheFileName)
+			*cacheFileName,
+			*berthaSrcURL)
 		defer s.Shutdown()
 		handler := authors.NewAuthorHandler(s)
 		router(handler)
