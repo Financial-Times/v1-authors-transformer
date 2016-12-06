@@ -31,6 +31,7 @@ type AuthorService interface {
 	isDataLoaded() bool
 	reloadDB() error
 	Shutdown() error
+	loadCuratedAuthors([]berthaAuthor) error
 }
 
 type authorServiceImpl struct {
@@ -54,10 +55,16 @@ func NewAuthorService(repo tmereader.Repository, baseURL string, taxonomyName st
 		if err != nil {
 			log.Errorf("Error while creating AuthorService: [%v]", err.Error())
 		}
+		var bAuthors []berthaAuthor
 
-		err = service.loadCuratedAuthors()
+		bAuthors, err = getBerthaAuthors(service.berthaURL)
 		if err != nil {
-			log.Errorf("Error while loading in the curated authors: [%v]", err.Error())
+			log.Errorf("Error on Bertha load: [%v]", err.Error())
+		} else {
+			err = service.loadCuratedAuthors(bAuthors)
+			if err != nil {
+				log.Errorf("Error while loading in the curated authors: [%v]", err.Error())
+			}
 		}
 
 	}(s)
@@ -334,18 +341,21 @@ func (s *authorServiceImpl) createCacheBucket() error {
 	})
 }
 
-func (s *authorServiceImpl) loadCuratedAuthors() error {
-	res, err := http.Get(s.berthaURL)
+func getBerthaAuthors(berthaURL string) ([]berthaAuthor, error) {
+	res, err := http.Get(berthaURL)
 	if err != nil {
-		return err
+		return []berthaAuthor{}, err
 	}
 
 	var bAuthors []berthaAuthor
 	err = json.NewDecoder(res.Body).Decode(&bAuthors)
-	if err != nil {
-		return err
-	}
-	err = s.db.Batch(func(tx *bolt.Tx) error {
+	return bAuthors, err
+}
+
+func (s *authorServiceImpl) loadCuratedAuthors(bAuthors []berthaAuthor) error {
+	s.Lock()
+	defer s.Unlock()
+	err := s.db.Batch(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket([]byte(cacheBucket))
 		if bucket == nil {
 			return fmt.Errorf("Cache bucket [%v] not found!", cacheBucket)

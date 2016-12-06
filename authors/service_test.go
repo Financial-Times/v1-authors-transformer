@@ -207,7 +207,7 @@ func assertCount(t *testing.T, s AuthorService, expected int) {
 }
 
 func createTestAuthorService(repo tmereader.Repository, cacheFileName string) AuthorService {
-	return NewAuthorService(repo, "/base/url", "taxonomy_string", 1, cacheFileName, "/bertha/url")
+	return NewAuthorService(repo, "/base/url", "taxonomy_string", 1, cacheFileName, "http://bertha/url")
 }
 
 func getTempFile(t *testing.T) *os.File {
@@ -370,5 +370,45 @@ func TestGoodAddBertha(t *testing.T) {
 
 	actualAuthor, err := addBerthaInformation(emptyAuthor, testAuthor)
 	assert.Equal(t, expectedAuthor, actualAuthor)
+	assert.Nil(t, err)
+}
+
+func TestLoadingCuratedAuthors(t *testing.T) {
+	// 	// authorService := &authorServiceImpl{repository: &dummyRepo{}, baseURL: "/base/url", taxonomyName: "taxonomy_string", maxTmeRecords: 1, initialised: true, cacheFileName: "test1.db", berthaURL: "/bertha/url"}
+	authorService := NewAuthorService(&dummyRepo{}, "/base/url", "taxonomy", 1, "test1.db", "/bertha/url")
+	log.Info(authorService)
+	input := []berthaAuthor{
+		berthaAuthor{
+			Name:            "Terry",
+			Email:           "terry@orange.com",
+			TwitterHandle:   "@terryorange",
+			FacebookProfile: "/terryorange",
+			LinkedinProfile: "terryorange",
+			Biography:       "<h1>A test biography</h1>",
+			ImageURL:        "image-of-terry.jpg",
+			TmeIdentifier:   "1234567890",
+		},
+	}
+	expectedAuthor := author{
+		UUID:            "e807f1fc-f82d-332f-9bb0-18ca6738a19f",
+		Name:            "Terry",
+		PrefLabel:       "Terry",
+		EmailAddress:    "terry@orange.com",
+		TwitterHandle:   "@terryorange",
+		FacebookProfile: "/terryorange",
+		LinkedinProfile: "terryorange",
+		Description:     "****************\nA test biography\n****************",
+		DescriptionXML:  "<h1>A test biography</h1>",
+		ImageURL:        "image-of-terry.jpg",
+		AlternativeIdentifiers: alternativeIdentifiers{
+			UUIDs: []string{"e807f1fc-f82d-332f-9bb0-18ca6738a19f"},
+			TME:   []string{"1234567890"},
+		},
+	}
+
+	authorService.loadCuratedAuthors(input)
+	actualOutput, found, err := authorService.getAuthorByUUID("e807f1fc-f82d-332f-9bb0-18ca6738a19f")
+	assert.Equal(t, true, found)
+	assert.EqualValues(t, expectedAuthor, actualOutput)
 	assert.Nil(t, err)
 }

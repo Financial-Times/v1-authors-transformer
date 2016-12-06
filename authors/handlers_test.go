@@ -304,6 +304,10 @@ type dummyService struct {
 	wg           *sync.WaitGroup
 }
 
+func (s *dummyService) loadCuratedAuthors(bAuthors []berthaAuthor) error {
+	return nil
+}
+
 func (s *dummyService) getAuthors() (io.PipeReader, error) {
 	pv, pw := io.Pipe()
 	go func() {
