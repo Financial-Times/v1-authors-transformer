@@ -405,6 +405,8 @@ func TestLoadingCuratedAuthors(t *testing.T) {
 			TME:   []string{"1234567890"},
 		},
 	}
+	waitTillInit(t, authorService)
+	waitTillDataLoaded(t, authorService)
 
 	authorService.loadCuratedAuthors(input)
 	actualOutput, found, err := authorService.getAuthorByUUID("e807f1fc-f82d-332f-9bb0-18ca6738a19f")
