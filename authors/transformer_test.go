@@ -1,9 +1,10 @@
 package authors
 
 import (
+	"testing"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 const (
@@ -23,9 +24,7 @@ func TestTransformAuthor(t *testing.T) {
 	tfp := transformAuthor(testTerm, taxonomyName)
 	log.Infof("got author %v", tfp)
 	assert.NotNil(t, tfp)
-	assert.Len(t, tfp.Aliases, 2)
-	assert.Equal(t, "B", tfp.Aliases[0])
-	assert.Equal(t, "b", tfp.Aliases[1])
+	assert.EqualValues(t, []string{"B", "b", "Bob"}, tfp.Aliases)
 	assert.Equal(t, "0e86d39b-8320-3a98-a87a-ff35d2cb04b9", tfp.UUID)
 	assert.Equal(t, "Bob", tfp.PrefLabel)
 }

@@ -38,7 +38,7 @@ func (*AuthorTransformer) UnMarshallTerm(content []byte) (interface{}, error) {
 func transformAuthor(tmeTerm term, taxonomyName string) author {
 	tmeIdentifier := buildTmeIdentifier(tmeTerm.RawID, taxonomyName)
 	authorUUID := uuid.NewMD5(uuid.UUID{}, []byte(tmeIdentifier)).String()
-	aliasList := buildAliasList(tmeTerm.Aliases)
+	aliasList := buildAliasList(tmeTerm.Aliases, tmeTerm.CanonicalName)
 	return author{
 		UUID:      authorUUID,
 		PrefLabel: tmeTerm.CanonicalName,
@@ -57,10 +57,32 @@ func buildTmeIdentifier(rawID string, tmeTermTaxonomyName string) string {
 	return id + "-" + taxonomyName
 }
 
-func buildAliasList(aList aliases) []string {
+// func buildAliasList(aList aliases) []string {
+// 	aliasList := make([]string, len(aList.Alias))
+// 	for k, v := range aList.Alias {
+// 		aliasList[k] = v.Name
+// 	}
+// 	return aliasList
+// }
+
+func removeDuplicates(slice []string) []string {
+	newSlice := []string{}
+	seen := make(map[string]bool)
+	for _, v := range slice {
+		if _, ok := seen[v]; !ok {
+			newSlice = append(newSlice, v)
+			seen[v] = true
+		}
+	}
+	return newSlice
+}
+
+func buildAliasList(aList aliases, canonicalName string) []string {
 	aliasList := make([]string, len(aList.Alias))
 	for k, v := range aList.Alias {
 		aliasList[k] = v.Name
 	}
+	aliasList = append(aliasList, canonicalName)
+	aliasList = removeDuplicates(aliasList)
 	return aliasList
 }
