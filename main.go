@@ -97,7 +97,7 @@ func main() {
 		EnvVar: "LOG_METRICS",
 	})
 	berthaSrcURL := app.String(cli.StringOpt{
-		Name:   "berthaSourceURL",
+		Name:   "bertha-source-url",
 		Desc:   "The URL of the Bertha Authors JSON source",
 		EnvVar: "BERTHA_SOURCE_URL",
 	})
