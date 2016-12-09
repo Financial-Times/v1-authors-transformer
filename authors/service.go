@@ -344,11 +344,15 @@ func (s *authorServiceImpl) createCacheBucket() error {
 func getBerthaAuthors(berthaURL string) ([]berthaAuthor, error) {
 	res, err := http.Get(berthaURL)
 	if err != nil {
+		log.Errorf("Failed to connect to Bertha: %s", berthaURL)
 		return []berthaAuthor{}, err
 	}
 
 	var bAuthors []berthaAuthor
 	err = json.NewDecoder(res.Body).Decode(&bAuthors)
+	if len(bAuthors) < 1 {
+		log.Warnf("No authors were found in Bertha response.")
+	}
 	return bAuthors, err
 }
 

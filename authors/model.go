@@ -18,7 +18,7 @@ type author struct {
 	AlternativeIdentifiers alternativeIdentifiers `json:"alternativeIdentifiers,omitempty"`
 	Aliases                []string               `json:"aliases,omitempty"`
 	BirthYear              int                    `json:"birthYear,omitempty"`
-	Name                   string                 `json:"name,omitempty"`
+	Name                   string                 `json:"name"`
 	Salutation             string                 `json:"salutation,omitempty"`
 	EmailAddress           string                 `json:"emailAddress,omitempty"`
 	TwitterHandle          string                 `json:"twitterHandle,omitempty"`
