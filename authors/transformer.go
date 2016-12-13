@@ -41,6 +41,7 @@ func transformAuthor(tmeTerm term, taxonomyName string) author {
 	aliasList := buildAliasList(tmeTerm.Aliases, tmeTerm.CanonicalName)
 	return author{
 		UUID:      authorUUID,
+		Name:      tmeTerm.CanonicalName,
 		PrefLabel: tmeTerm.CanonicalName,
 		AlternativeIdentifiers: alternativeIdentifiers{
 			TME:   []string{tmeIdentifier},

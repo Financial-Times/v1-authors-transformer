@@ -406,7 +406,7 @@ func addBerthaInformation(a author, b berthaAuthor) (author, error) {
 }
 
 func berthaToAuthor(a berthaAuthor) (author, error) {
-	uuid := uuid.NewMD5(uuid.UUID{}, []byte(a.TmeIdentifier)).String()
+	berthaUUID := uuid.NewMD5(uuid.UUID{}, []byte(a.TmeIdentifier)).String()
 	plainDescription, err := html2text.FromString(a.Biography)
 
 	if err != nil {
@@ -414,12 +414,12 @@ func berthaToAuthor(a berthaAuthor) (author, error) {
 	}
 
 	altIds := alternativeIdentifiers{
-		UUIDs: []string{uuid},
+		UUIDs: []string{berthaUUID},
 		TME:   []string{a.TmeIdentifier},
 	}
 
 	p := author{
-		UUID:                   uuid,
+		UUID:                   berthaUUID,
 		Name:                   a.Name,
 		PrefLabel:              a.Name,
 		EmailAddress:           a.Email,
