@@ -24,13 +24,13 @@ import (
 const (
 	testUUID          = "bba39990-c78d-3629-ae83-808c333c6dbc"
 	testUUID2         = "be2e7e2b-0fa2-3969-a69b-74c46e754032"
-	getAuthorResponse = `{"uuid":"bba39990-c78d-3629-ae83-808c333c6dbc","prefLabel":"","type":"","alternativeIdentifiers":{}}
-{"uuid":"be2e7e2b-0fa2-3969-a69b-74c46e754032","prefLabel":"","type":"","alternativeIdentifiers":{}}
+	getAuthorResponse = `{"uuid":"bba39990-c78d-3629-ae83-808c333c6dbc","prefLabel":"","type":"","alternativeIdentifiers":{},"name":""}
+{"uuid":"be2e7e2b-0fa2-3969-a69b-74c46e754032","prefLabel":"","type":"","alternativeIdentifiers":{},"name":""}
 `
 	getAuthorUUIDsResponse = `{"ID":"bba39990-c78d-3629-ae83-808c333c6dbc"}
 {"ID":"be2e7e2b-0fa2-3969-a69b-74c46e754032"}
 `
-	getAuthorByUUIDResponse = "{\"uuid\":\"bba39990-c78d-3629-ae83-808c333c6dbc\",\"prefLabel\":\"European Union\",\"type\":\"Organisation\",\"alternativeIdentifiers\":{\"TME\":[\"MTE3-U3ViamVjdHM=\"],\"uuids\":[\"bba39990-c78d-3629-ae83-808c333c6dbc\"]}}\n"
+	getAuthorByUUIDResponse = "{\"uuid\":\"bba39990-c78d-3629-ae83-808c333c6dbc\",\"prefLabel\":\"Julian Glover\",\"type\":\"Person\",\"alternativeIdentifiers\":{\"TME\":[\"MTE3-U3ViamVjdHM=\"],\"uuids\":[\"bba39990-c78d-3629-ae83-808c333c6dbc\"]},\"name\":\"Julian Glover\"}\n"
 )
 
 func TestHandlers(t *testing.T) {
@@ -48,7 +48,7 @@ func TestHandlers(t *testing.T) {
 			&dummyService{
 				found:       true,
 				initialised: true,
-				authors:     []author{{UUID: testUUID, PrefLabel: "European Union", AlternativeIdentifiers: alternativeIdentifiers{UUIDs: []string{testUUID}, TME: []string{"MTE3-U3ViamVjdHM="}}, Type: "Organisation"}}},
+				authors:     []author{{UUID: testUUID, Name: "Julian Glover", PrefLabel: "Julian Glover", AlternativeIdentifiers: alternativeIdentifiers{UUIDs: []string{testUUID}, TME: []string{"MTE3-U3ViamVjdHM="}}, Type: "Person"}}},
 			http.StatusOK,
 			"application/json",
 			getAuthorByUUIDResponse},

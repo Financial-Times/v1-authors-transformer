@@ -374,11 +374,12 @@ func TestGoodAddBertha(t *testing.T) {
 }
 
 func TestLoadingCuratedAuthors(t *testing.T) {
-	// 	// authorService := &authorServiceImpl{repository: &dummyRepo{}, baseURL: "/base/url", taxonomyName: "taxonomy_string", maxTmeRecords: 1, initialised: true, cacheFileName: "test1.db", berthaURL: "/bertha/url"}
-	authorService := NewAuthorService(&dummyRepo{}, "/base/url", "taxonomy", 1, "test1.db", "/bertha/url")
+	tmpfile := getTempFile(t)
+	defer os.Remove(tmpfile.Name())
+	authorService := NewAuthorService(&dummyRepo{}, "/base/url", "taxonomy", 1, tmpfile.Name(), "/bertha/url")
 	log.Info(authorService)
 	input := []berthaAuthor{
-		berthaAuthor{
+		{
 			Name:            "Terry",
 			Email:           "terry@orange.com",
 			TwitterHandle:   "@terryorange",
