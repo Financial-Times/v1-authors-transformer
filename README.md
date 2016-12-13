@@ -21,13 +21,8 @@ or update:
 
 ## Running locally
 ````
-$GOPATH/bin/ ./v1-authors-transformer --tme-username=<TME_USERNAME> --tme-password=<TME_PASSWORD> --token=<TOKEN> --bertha-source-url=<BERTHA_SOURCE_URL>
+$GOPATH/bin/v1-authors-transformer --tme-username=<TME_USERNAME> --tme-password=<TME_PASSWORD> --token=<TOKEN> --bertha-source-url=<BERTHA_SOURCE_URL>
 ````
-or 
-````
-$GOPATH/bin/v1-authors-transformer TME_USERNAME=<TME_USERNAME> TME_PASSWORD=<TME_PASSWORD>  TOKEN=<TOKEN> BERTHA_SOURCE_URL=<BERTHA_SOURCE_URL> v1-authors-transformer
-````
-The latter run command does't perform parameter checking.
 
 TME credentials are mandatory and can be found in lastpass.  
 BERTHA_SOURCE_URL can be found in [UPP Documentation about curated authors](https://sites.google.com/a/ft.com/universal-publishing/how-can-i/load-curated-authors?pli=1) in Google sites.  
