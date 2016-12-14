@@ -124,7 +124,8 @@ func main() {
 			tmeTaxonomyName,
 			*maxRecords,
 			*cacheFileName,
-			*berthaSrcURL)
+			*berthaSrcURL,
+			client)
 		defer s.Shutdown()
 		handler := authors.NewAuthorHandler(s)
 		router(handler)
