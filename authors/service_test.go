@@ -5,11 +5,13 @@ import (
 	"encoding/json"
 	"io"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"sync"
 	"testing"
 	"time"
 
+	"bytes"
 	"github.com/Financial-Times/tme-reader/tmereader"
 	log "github.com/Sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
@@ -135,7 +137,7 @@ func TestGetAuthorLinks(t *testing.T) {
 func TestGetCount(t *testing.T) {
 	tmpfile := getTempFile(t)
 	defer os.Remove(tmpfile.Name())
-	repo := dummyRepo{terms: []term{{CanonicalName: "Bob", RawID: "bob"}, {CanonicalName: "Fred", RawID: "fred"}}}
+	repo := dummyRepo{terms: []term{{CanonicalName: "Terry", RawID: "1234567890"}, {CanonicalName: "Fred", RawID: "fred"}}}
 	service := createTestAuthorService(&repo, tmpfile.Name())
 	defer service.Shutdown()
 	waitTillInit(t, service)
@@ -207,7 +209,8 @@ func assertCount(t *testing.T, s AuthorService, expected int) {
 }
 
 func createTestAuthorService(repo tmereader.Repository, cacheFileName string) AuthorService {
-	return NewAuthorService(repo, "/base/url", "taxonomy_string", 1, cacheFileName, "http://bertha/url")
+	input := []berthaAuthor{}
+	return NewAuthorService(repo, "/base/url", "taxonomy_string", 1, cacheFileName, "/bertha/url", &mockClient{resp: input})
 }
 
 func getTempFile(t *testing.T) *os.File {
@@ -238,6 +241,20 @@ func waitTillDataLoaded(t *testing.T, s AuthorService) {
 		time.Sleep(100 * time.Millisecond)
 	}
 	assert.True(t, s.isDataLoaded())
+}
+
+type mockClient struct {
+	resp []berthaAuthor
+	err  error
+}
+
+func (c *mockClient) Do(req *http.Request) (*http.Response, error) {
+	b, e := json.Marshal(c.resp)
+	if c.err == nil {
+		c.err = e
+	}
+	cb := ioutil.NopCloser(bytes.NewReader(b))
+	return &http.Response{Body: cb}, c.err
 }
 
 type dummyRepo struct {
@@ -376,8 +393,6 @@ func TestGoodAddBertha(t *testing.T) {
 func TestLoadingCuratedAuthors(t *testing.T) {
 	tmpfile := getTempFile(t)
 	defer os.Remove(tmpfile.Name())
-	authorService := NewAuthorService(&dummyRepo{}, "/base/url", "taxonomy", 1, tmpfile.Name(), "/bertha/url")
-	log.Info(authorService)
 	input := []berthaAuthor{
 		{
 			Name:            "Terry",
@@ -390,6 +405,7 @@ func TestLoadingCuratedAuthors(t *testing.T) {
 			TmeIdentifier:   "1234567890",
 		},
 	}
+	authorService := NewAuthorService(&dummyRepo{}, "/base/url", "taxonomy", 1, tmpfile.Name(), "/bertha/url", &mockClient{resp: input})
 	expectedAuthor := author{
 		UUID:            "e807f1fc-f82d-332f-9bb0-18ca6738a19f",
 		Name:            "Terry",

@@ -20,6 +20,10 @@ const (
 	cacheBucket = "author"
 )
 
+type httpClient interface {
+	Do(req *http.Request) (resp *http.Response, err error)
+}
+
 // AuthorService - interface for retrieving v1 authors
 type AuthorService interface {
 	getAuthors() (io.PipeReader, error)
@@ -45,29 +49,22 @@ type authorServiceImpl struct {
 	cacheFileName string
 	db            *bolt.DB
 	berthaURL     string
+	httpClient    httpClient
 }
 
 // NewAuthorService - create a new AuthorService
-func NewAuthorService(repo tmereader.Repository, baseURL string, taxonomyName string, maxTmeRecords int, cacheFileName string, berthaURL string) AuthorService {
-	s := &authorServiceImpl{repository: repo, baseURL: baseURL, taxonomyName: taxonomyName, maxTmeRecords: maxTmeRecords, initialised: true, cacheFileName: cacheFileName, berthaURL: berthaURL}
-	go func(service *authorServiceImpl) {
-		err := service.loadDB()
-		if err != nil {
-			log.Errorf("Error while creating AuthorService: [%v]", err.Error())
-		}
-		var bAuthors []berthaAuthor
-
-		bAuthors, err = getBerthaAuthors(service.berthaURL)
-		if err != nil {
-			log.Errorf("Error on Bertha load: [%v]", err.Error())
-		} else {
-			err = service.loadCuratedAuthors(bAuthors)
-			if err != nil {
-				log.Errorf("Error while loading in the curated authors: [%v]", err.Error())
-			}
-		}
-
-	}(s)
+func NewAuthorService(repo tmereader.Repository, baseURL string, taxonomyName string, maxTmeRecords int, cacheFileName string, berthaURL string, httpClient httpClient) AuthorService {
+	s := &authorServiceImpl{
+		repository:    repo,
+		baseURL:       baseURL,
+		taxonomyName:  taxonomyName,
+		maxTmeRecords: maxTmeRecords,
+		initialised:   true,
+		cacheFileName: cacheFileName,
+		berthaURL:     berthaURL,
+		httpClient:    httpClient}
+	s.setDataLoaded(false)
+	go func(service *authorServiceImpl) { service.reloadDB() }(s)
 	return s
 }
 
@@ -250,7 +247,25 @@ func (s *authorServiceImpl) openDB() error {
 
 func (s *authorServiceImpl) reloadDB() error {
 	s.setDataLoaded(false)
-	return s.loadDB()
+	err := s.loadDB()
+	if err != nil {
+		log.Errorf("Error while creating AuthorService: [%v]", err.Error())
+		return err
+	}
+	var bAuthors []berthaAuthor
+
+	bAuthors, err = s.getBerthaAuthors(s.berthaURL)
+	if err != nil {
+		log.Errorf("Error on Bertha load: [%v]", err.Error())
+		return err
+	} else {
+		err = s.loadCuratedAuthors(bAuthors)
+		if err != nil {
+			log.Errorf("Error while loading in the curated authors: [%v]", err.Error())
+		}
+	}
+
+	return err
 }
 
 func (s *authorServiceImpl) loadDB() error {
@@ -341,12 +356,13 @@ func (s *authorServiceImpl) createCacheBucket() error {
 	})
 }
 
-func getBerthaAuthors(berthaURL string) ([]berthaAuthor, error) {
-	res, err := http.Get(berthaURL)
+func (s *authorServiceImpl) getBerthaAuthors(berthaURL string) ([]berthaAuthor, error) {
+	req, err := http.NewRequest("GET", berthaURL, nil)
 	if err != nil {
 		return []berthaAuthor{}, err
 	}
 
+	res, err := s.httpClient.Do(req)
 	var bAuthors []berthaAuthor
 	err = json.NewDecoder(res.Body).Decode(&bAuthors)
 	return bAuthors, err
