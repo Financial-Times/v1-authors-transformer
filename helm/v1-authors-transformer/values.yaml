@@ -1,0 +1,24 @@
+# Default values for v1-authors-transformer.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+service:
+  name: "" # The name of the service, should be defined in the specific app-configs folder.
+  hasHealthcheck: "true"
+replicaCount: 1
+image:
+  repository: coco/v1-authors-transformer
+  pullPolicy: IfNotPresent
+resources:
+  limits:
+    memory: 1Gi
+cache:
+ size: 5Gi
+ nfsServer: ""
+ path: ""
+env:
+  PORT: 8080
+  BASE_URL:  ""
+  CACHE_FILE_NAME: ""
+  BERTHA_SOURCE_URL: ""
+  GRAPHITE_PREFIX: ""
+  LOG_METRICS: false
