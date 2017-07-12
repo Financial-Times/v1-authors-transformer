@@ -15,3 +15,4 @@ v1-authors-transformer
 *.db
 *.lock
 tmp*
+vendor/*/
