@@ -56,7 +56,7 @@ spec:
         - name: BERTHA_SOURCE_URL
           value: {{ .Values.env.BERTHA_SOURCE_URL }} 
         - name: GRAPHITE_PREFIX
-          value: {{ .Values.env.GRAPHITE_PREFIX }} 
+          value: "coco.services.k8s.{{ .Values.service.name }}"
         - name: LOG_METRICS
           value: "{{ .Values.env.LOG_METRICS }}"
         volumeMounts:

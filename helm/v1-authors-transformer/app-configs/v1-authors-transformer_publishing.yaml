@@ -3,13 +3,12 @@ replicaCount: 1
 service:
   name: v1-authors-transformer
 cache:
- size: 5Gi
- nfsServer: fs-6330fcaa.efs.eu-west-1.amazonaws.com
- path: "/"
+  size: 5Gi
+  nfsServer: fs-6330fcaa.efs.eu-west-1.amazonaws.com
+  path: "/"
 env:
   PORT: 8080
-  BASE_URL:  "http://v1-authors-transformer:8080/transformers/authors/"
+  BASE_URL: "http://v1-authors-transformer:8080/transformers/authors/"
   CACHE_FILE_NAME: "/cache/v1-authors-transformer.db"
   BERTHA_SOURCE_URL: "http://bertha.ig.ft.com/view/publish/gss/1wEdVRLtayZ6-XBfYM3vKAGaOV64cNJD3L8MlLM8-uFY/TestAuthors"
-  GRAPHITE_PREFIX: "coco.services.k8s.v1-authors-transformer"
   LOG_METRICS: false
