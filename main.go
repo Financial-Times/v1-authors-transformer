@@ -14,11 +14,11 @@ import (
 	status "github.com/Financial-Times/service-status-go/httphandlers"
 	"github.com/Financial-Times/tme-reader/tmereader"
 	"github.com/Financial-Times/v1-authors-transformer/authors"
-	log "github.com/sirupsen/logrus"
 	"github.com/gorilla/mux"
 	"github.com/jawher/mow.cli"
 	"github.com/rcrowley/go-metrics"
 	"github.com/sethgrid/pester"
+	log "github.com/sirupsen/logrus"
 )
 
 func main() {

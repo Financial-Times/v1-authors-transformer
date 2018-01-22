@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"bytes"
+
 	"github.com/Financial-Times/tme-reader/tmereader"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"

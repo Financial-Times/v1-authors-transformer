@@ -13,13 +13,14 @@ import (
 	"sync"
 	"testing"
 
-	fthealth "github.com/Financial-Times/go-fthealth/v1_1"
-	status "github.com/Financial-Times/service-status-go/httphandlers"
-	log "github.com/sirupsen/logrus"
-	"github.com/gorilla/mux"
-	"github.com/stretchr/testify/assert"
 	"time"
+
+	fthealth "github.com/Financial-Times/go-fthealth/v1_1"
 	"github.com/Financial-Times/service-status-go/gtg"
+	status "github.com/Financial-Times/service-status-go/httphandlers"
+	"github.com/gorilla/mux"
+	log "github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
 )
 
 const (
