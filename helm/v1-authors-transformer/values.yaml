@@ -11,13 +11,10 @@ image:
 resources:
   limits:
     memory: 1Gi
-cache:
-  size: 5Gi
-  nfsServer: ""
-  path: ""
+  requests:
+    memory: 64Mi
 env:
   PORT: 8080
   BASE_URL:  ""
   CACHE_FILE_NAME: ""
-  BERTHA_SOURCE_URL: ""
   LOG_METRICS: false

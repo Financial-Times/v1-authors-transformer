@@ -55,13 +55,16 @@ spec:
         - name: CACHE_FILE_NAME
           value: {{ .Values.env.CACHE_FILE_NAME }} 
         - name: BERTHA_SOURCE_URL
-          value: {{ .Values.env.BERTHA_SOURCE_URL }} 
+          valueFrom:
+            secretKeyRef:
+              name: global-secrets
+              key: bertha.authors.url
         - name: GRAPHITE_PREFIX
           value: "coco.services.k8s.{{ .Values.service.name }}"
         - name: LOG_METRICS
           value: "{{ .Values.env.LOG_METRICS }}"
         volumeMounts:
-        - name: v1-authors-transformer-cache
+        - name: "{{ .Values.service.name }}-cache"
           mountPath: /cache
         ports: 
         - containerPort: 8080 
