@@ -18,3 +18,5 @@ env:
   BASE_URL:  ""
   CACHE_FILE_NAME: ""
   LOG_METRICS: false
+cache:
+  size: 5Gi
