@@ -382,7 +382,7 @@ func router(s AuthorService) *mux.Router {
 	m.HandleFunc("/transformers/authors/__id", h.GetAuthorUUIDs).Methods("GET")
 	m.HandleFunc("/transformers/authors/{uuid}", h.GetAuthorByUUID).Methods("GET")
 	m.HandleFunc("/__health", v1a.Handler("V1 Authors Transformer Healthchecks", "Checks for the health of the service", h.HealthCheck()))
-	g2gHandler := status.NewGoodToGoHandler(gtg.StatusChecker(h.G2GCheck))
+	g2gHandler := status.NewGoodToGoHandler(gtg.StatusChecker(h.GTG))
 	m.HandleFunc(status.GTGPath, g2gHandler)
 	return m
 }

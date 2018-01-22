@@ -9,13 +9,12 @@ import (
 	"time"
 
 	"github.com/Financial-Times/base-ft-rw-app-go/baseftrwapp"
-	"github.com/Financial-Times/go-fthealth/v1a"
+	fthealth "github.com/Financial-Times/go-fthealth/v1_1"
 	"github.com/Financial-Times/http-handlers-go/httphandlers"
-	"github.com/Financial-Times/service-status-go/gtg"
 	status "github.com/Financial-Times/service-status-go/httphandlers"
 	"github.com/Financial-Times/tme-reader/tmereader"
 	"github.com/Financial-Times/v1-authors-transformer/authors"
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/gorilla/mux"
 	"github.com/jawher/mow.cli"
 	"github.com/rcrowley/go-metrics"
@@ -151,16 +150,22 @@ func router(handler authors.AuthorHandler) {
 	var monitoringRouter http.Handler = servicesRouter
 	monitoringRouter = httphandlers.TransactionAwareRequestLoggingHandler(log.StandardLogger(), monitoringRouter)
 	monitoringRouter = httphandlers.HTTPMetricsHandler(metrics.DefaultRegistry, monitoringRouter)
+	timedHC := fthealth.TimedHealthCheck{
+		HealthCheck: fthealth.HealthCheck{
+			SystemCode:  "v1-authors-tf",
+			Name:        "V1 Authors Transformer",
+			Description: "It pulls and transforms V1/TME Authors into the UPP JSON model of an Author.",
+			Checks:      []fthealth.Check{handler.HealthCheck()},
+		},
+		Timeout: 10 * time.Second,
+	}
 
+	http.HandleFunc("/__health", fthealth.Handler(timedHC))
 	http.HandleFunc(status.PingPath, status.PingHandler)
 	http.HandleFunc(status.PingPathDW, status.PingHandler)
 	http.HandleFunc(status.BuildInfoPath, status.BuildInfoHandler)
 	http.HandleFunc(status.BuildInfoPathDW, status.BuildInfoHandler)
-
-	http.HandleFunc("/__health", v1a.Handler("V1 Authors Transformer Healthchecks", "Checks for the health of the service", handler.HealthCheck()))
-
-	g2gHandler := status.NewGoodToGoHandler(gtg.StatusChecker(handler.G2GCheck))
-	http.HandleFunc(status.GTGPath, g2gHandler)
+	http.HandleFunc(status.GTGPath, status.NewGoodToGoHandler(handler.GTG))
 	http.Handle("/", monitoringRouter)
 }
 
