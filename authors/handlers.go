@@ -125,6 +125,9 @@ func (h *AuthorHandler) initChecker() (string, error) {
 	if h.service.isInitialised() && err == nil && count > 0 {
 		return "Service is initialised", err
 	}
+	if err == nil {
+		err = errors.New("service is not initialised yet")
+	}
 	return "Service is not initialised yet, or there was an error with the initialization", err
 }
 
