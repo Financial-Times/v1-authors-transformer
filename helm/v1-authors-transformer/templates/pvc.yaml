@@ -1,10 +1,13 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ .Values.service.name }}-cache-pvc
+  name: "{{ .Values.service.name }}-cache-pvc"
 spec:
   accessModes:
     - ReadWriteMany
   resources:
     requests:
-storage: {{ .Values.cache.size }}
+      storage: {{ .Values.cache.size }}
+  selector:
+    matchLabels:
+      provisioned-for: "{{.Values.service.name}}"
