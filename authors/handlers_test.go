@@ -394,7 +394,6 @@ func router(s AuthorService) *mux.Router {
 	}
 
 	m.HandleFunc("/__health", fthealth.Handler(timedHC))
-	//m.HandleFunc(status.GTGPath, status.NewGoodToGoHandler(h.GTG))
 	g2gHandler := status.NewGoodToGoHandler(gtg.StatusChecker(h.GTG))
 	m.HandleFunc(status.GTGPath, g2gHandler)
 	return m
