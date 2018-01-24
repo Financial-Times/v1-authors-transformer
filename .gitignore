@@ -10,8 +10,9 @@
 *.html
 *coverage.*
 *.iml
-v1-authors-transformer
+/v1-authors-transformer
 .idea/
 *.db
 *.lock
 tmp*
+vendor/*/

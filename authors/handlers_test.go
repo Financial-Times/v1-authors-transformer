@@ -13,11 +13,13 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/Financial-Times/go-fthealth/v1a"
+	"time"
+
+	fthealth "github.com/Financial-Times/go-fthealth/v1_1"
 	"github.com/Financial-Times/service-status-go/gtg"
 	status "github.com/Financial-Times/service-status-go/httphandlers"
-	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
+	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -165,7 +167,7 @@ func TestHandlers(t *testing.T) {
 				authors:     []author{}},
 			http.StatusServiceUnavailable,
 			"application/json",
-			""},
+			"service is not initialised yet"},
 		{"GTG unavailable - get GTG but no authors",
 			newRequest("GET", status.GTGPath),
 			&dummyService{
@@ -173,7 +175,7 @@ func TestHandlers(t *testing.T) {
 				initialised: true},
 			http.StatusServiceUnavailable,
 			"application/json",
-			""},
+			"service is not initialised yet"},
 		{"GTG unavailable - get GTG count returns error",
 			newRequest("GET", status.GTGPath),
 			&dummyService{
@@ -182,7 +184,7 @@ func TestHandlers(t *testing.T) {
 				err:         errors.New("Count error")},
 			http.StatusServiceUnavailable,
 			"application/json",
-			""},
+			"Count error"},
 		{"GTG OK - get GTG",
 			newRequest("GET", status.GTGPath),
 			&dummyService{
@@ -199,7 +201,7 @@ func TestHandlers(t *testing.T) {
 				initialised: false},
 			http.StatusOK,
 			"application/json",
-			"regex=Service is initilising"},
+			"regex=Service is initialising"},
 		{"Health good - get Health check",
 			newRequest("GET", "/__health"),
 			&dummyService{
@@ -381,8 +383,18 @@ func router(s AuthorService) *mux.Router {
 	m.HandleFunc("/transformers/authors/__reload", h.Reload).Methods("POST")
 	m.HandleFunc("/transformers/authors/__id", h.GetAuthorUUIDs).Methods("GET")
 	m.HandleFunc("/transformers/authors/{uuid}", h.GetAuthorByUUID).Methods("GET")
-	m.HandleFunc("/__health", v1a.Handler("V1 Authors Transformer Healthchecks", "Checks for the health of the service", h.HealthCheck()))
-	g2gHandler := status.NewGoodToGoHandler(gtg.StatusChecker(h.G2GCheck))
+	timedHC := fthealth.TimedHealthCheck{
+		HealthCheck: fthealth.HealthCheck{
+			SystemCode:  "v1-authors-tf",
+			Name:        "V1 Authors Transformer",
+			Description: "It pulls and transforms V1/TME Authors into the UPP JSON model of an Author.",
+			Checks:      []fthealth.Check{h.HealthCheck()},
+		},
+		Timeout: 10 * time.Second,
+	}
+
+	m.HandleFunc("/__health", fthealth.Handler(timedHC))
+	g2gHandler := status.NewGoodToGoHandler(gtg.StatusChecker(h.GTG))
 	m.HandleFunc(status.GTGPath, g2gHandler)
 	return m
 }

@@ -1,0 +1,9 @@
+# Values used for the deployed application.
+replicaCount: 1
+service:
+  name: v1-authors-transformer
+env:
+  PORT: 8080
+  BASE_URL: "http://v1-authors-transformer:8080/transformers/authors/"
+  CACHE_FILE_NAME: "/cache/v1-authors-transformer.db"
+  LOG_METRICS: false

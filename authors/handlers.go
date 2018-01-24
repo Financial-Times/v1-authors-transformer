@@ -8,10 +8,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/Financial-Times/go-fthealth/v1a"
+	fthealth "github.com/Financial-Times/go-fthealth/v1_1"
 	"github.com/Financial-Times/service-status-go/gtg"
-	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
+	log "github.com/sirupsen/logrus"
 )
 
 // AuthorHandler - struct for the handlers
@@ -89,30 +89,46 @@ func (h *AuthorHandler) GetCount(writer http.ResponseWriter, req *http.Request) 
 }
 
 // HealthCheck - Return FT standard healthcheck
-func (h *AuthorHandler) HealthCheck() v1a.Check {
-
-	return v1a.Check{
+func (h *AuthorHandler) HealthCheck() fthealth.Check {
+	return fthealth.Check{
 		BusinessImpact:   "Unable to respond to requests",
-		Name:             "Check service has finished initilising.",
-		PanicGuide:       "https://sites.google.com/a/ft.com/ft-technology-service-transition/home/run-book-library/v1-authors-transformer",
+		Name:             "Check service has finished initialising.",
+		PanicGuide:       "TBD",
 		Severity:         1,
 		TechnicalSummary: "Cannot serve any content as data not loaded.",
 		Checker: func() (string, error) {
 			if h.service.isInitialised() {
 				return "Service is up and running", nil
 			}
-			return "Error as service initilising", errors.New("Service is initilising.")
+			return "Error as service initialising", errors.New("Service is initialising.")
 		},
 	}
 }
 
-// G2GCheck - Return FT standard good-to-go check
-func (h *AuthorHandler) G2GCheck() gtg.Status {
+// GTG - Return FT standard good-to-go check
+func (h *AuthorHandler) GTG() gtg.Status {
+	statusCheck := func() gtg.Status {
+		return gtgCheck(h.initChecker)
+	}
+	return gtg.FailFastParallelCheck([]gtg.StatusChecker{statusCheck})()
+}
+
+func gtgCheck(handler func() (string, error)) gtg.Status {
+	if _, err := handler(); err != nil {
+		return gtg.Status{GoodToGo: false, Message: err.Error()}
+	}
+	return gtg.Status{GoodToGo: true}
+}
+
+func (h *AuthorHandler) initChecker() (string, error) {
 	count, err := h.service.getCount()
 	if h.service.isInitialised() && err == nil && count > 0 {
-		return gtg.Status{GoodToGo: true}
+		return "Service is initialised", err
 	}
-	return gtg.Status{GoodToGo: false}
+	if err == nil {
+		err = errors.New("service is not initialised yet")
+	}
+	return "Service is not initialised yet, or there was an error with the initialization", err
 }
 
 // GetAuthorByUUID - Return the JSON for a single author

@@ -1,0 +1,243 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "FfEWrE4sbtmtyeBTHCCF1q3QBxU=",
+			"path": "github.com/Financial-Times/base-ft-rw-app-go/baseftrwapp",
+			"revision": "0800bf5938ecfb4d343ac396117287d289242c8f",
+			"revisionTime": "2017-08-31T12:49:05Z",
+			"version": "1.0.2",
+			"versionExact": "1.0.2"
+		},
+		{
+			"checksumSHA1": "G8lW8pPVLieqh/MTJZkvI/i/WyM=",
+			"path": "github.com/Financial-Times/go-fthealth/v1_1",
+			"revision": "1b007e2b37b7936dfb6671fa17e5a29fd35a08ea",
+			"revisionTime": "2017-12-04T12:48:31Z",
+			"version": "0.4.0",
+			"versionExact": "0.4.0"
+		},
+		{
+			"checksumSHA1": "dqF1g4reeLPNN10qTXgDJj3fHm4=",
+			"path": "github.com/Financial-Times/http-handlers-go/httphandlers",
+			"revision": "229ac16f1d9ec9bca485d2dafb9ec14dc7e9ba24",
+			"revisionTime": "2017-08-09T12:10:07Z"
+		},
+		{
+			"checksumSHA1": "b1h/DnXaU+/5tpFYbMLLs7QBSk4=",
+			"path": "github.com/Financial-Times/neo-utils-go",
+			"revision": "5cb1750096545b3c8f7384326247e3e30996a905",
+			"revisionTime": "2017-08-22T15:20:35Z",
+			"version": "1.0.2",
+			"versionExact": "1.0.2"
+		},
+		{
+			"checksumSHA1": "ibld3tkf8qmEKpF69JI4mrSN0T8=",
+			"path": "github.com/Financial-Times/neo-utils-go/neoutils",
+			"revision": "5cb1750096545b3c8f7384326247e3e30996a905",
+			"revisionTime": "2017-08-22T15:20:35Z",
+			"version": "1.0.2",
+			"versionExact": "1.0.2"
+		},
+		{
+			"checksumSHA1": "fqpohN7Qp2qj7TLMbUxh/cK4oH0=",
+			"path": "github.com/Financial-Times/service-status-go/buildinfo",
+			"revision": "3f5199736a3d7ae52394c63aac36834786825e21",
+			"revisionTime": "2016-03-23T11:15:42Z"
+		},
+		{
+			"checksumSHA1": "2rGNLXdRC3qr5n5ll7BpYt8HCK8=",
+			"path": "github.com/Financial-Times/service-status-go/gtg",
+			"revision": "3f5199736a3d7ae52394c63aac36834786825e21",
+			"revisionTime": "2016-03-23T11:15:42Z"
+		},
+		{
+			"checksumSHA1": "973POGyMCoyaKQuIYX2f7EKFwlQ=",
+			"path": "github.com/Financial-Times/service-status-go/httphandlers",
+			"revision": "3f5199736a3d7ae52394c63aac36834786825e21",
+			"revisionTime": "2016-03-23T11:15:42Z"
+		},
+		{
+			"checksumSHA1": "TE8mgtdSf7GxkGLTdMtOk2MR5Og=",
+			"path": "github.com/Financial-Times/tme-reader/tmereader",
+			"revision": "915d6f297e5ae87b1737c0e41a7a66490caa3787",
+			"revisionTime": "2016-06-08T16:15:02Z"
+		},
+		{
+			"checksumSHA1": "+sjiZBzrsk91W1A3Md1azCkZadg=",
+			"path": "github.com/Financial-Times/transactionid-utils-go",
+			"revision": "df2f00c734957c9dd651ce23ab0e0902504c7636",
+			"revisionTime": "2017-03-28T16:39:54Z"
+		},
+		{
+			"checksumSHA1": "diw1KueSVzsMHPCNDvj+xQiXSTE=",
+			"path": "github.com/Financial-Times/up-rw-app-api-go/rwapi",
+			"revision": "d9d93a1f689538313d12fee6f5f10715cfe280e0",
+			"revisionTime": "2017-07-10T12:58:28Z",
+			"version": "1.0.0",
+			"versionExact": "1.0.0"
+		},
+		{
+			"checksumSHA1": "CIaQq8mfGNZbWy7kmDAJkXE+Xtc=",
+			"path": "github.com/boltdb/bolt",
+			"revision": "3f7947a25d970e1e5f512276c14d5dcf731ccd5e",
+			"revisionTime": "2016-06-16T19:33:16Z"
+		},
+		{
+			"checksumSHA1": "8/Q1JbAHUmL4sDURLq6yron4K/I=",
+			"path": "github.com/cyberdelia/go-metrics-graphite",
+			"revision": "7e54b5c2aa6eaff4286c44129c3def899dff528c",
+			"revisionTime": "2015-12-04T23:33:54Z"
+		},
+		{
+			"checksumSHA1": "OFu4xJEIjiI8Suu+j/gabfp+y6Q=",
+			"origin": "github.com/stretchr/testify/vendor/github.com/davecgh/go-spew/spew",
+			"path": "github.com/davecgh/go-spew/spew",
+			"revision": "4d4bfba8f1d1027c4fdbe371823030df51419987",
+			"revisionTime": "2017-01-30T11:31:45Z"
+		},
+		{
+			"checksumSHA1": "g/V4qrXjUGG9B+e3hB+4NAYJ5Gs=",
+			"path": "github.com/gorilla/context",
+			"revision": "08b5f424b9271eedf6f9f0ce86cb9396ed337a42",
+			"revisionTime": "2016-08-17T18:46:32Z"
+		},
+		{
+			"checksumSHA1": "/pPU/LYG3GrNyWNH+OjRJw+ETMA=",
+			"path": "github.com/gorilla/mux",
+			"revision": "b12896167c61cb7a17ee5f15c2ba0729d78793db",
+			"revisionTime": "2017-01-17T07:01:07Z",
+			"version": "=v1.2.0",
+			"versionExact": "v1.2.0"
+		},
+		{
+			"checksumSHA1": "tUGxc7rfX0cmhOOUDhMuAZ9rWsA=",
+			"path": "github.com/hashicorp/go-version",
+			"revision": "03c5bf6be031b6dd45afec16b1cf94fc8938bc77",
+			"revisionTime": "2017-02-02T08:07:59Z"
+		},
+		{
+			"checksumSHA1": "pYoO37aSFZl2uJAXpePBDnGItZc=",
+			"path": "github.com/jawher/mow.cli",
+			"revision": "d3ffbc2f98b83e09dc8efd55ecec75eb5fd656ec",
+			"revisionTime": "2017-02-20T22:51:54Z"
+		},
+		{
+			"checksumSHA1": "Rjp42PSAN8d1tprKSMNAR/1TAqo=",
+			"path": "github.com/jaytaylor/html2text",
+			"revision": "7c7a33a7a158a5ce395c803d2b6a209b2bbc14c8",
+			"revisionTime": "2017-05-30T23:22:55Z"
+		},
+		{
+			"checksumSHA1": "nMm7xgpbpYYWy/zdKttNSoo1HAE=",
+			"path": "github.com/jmcvetta/neoism",
+			"revision": "4674154f870d19b356581843f481dccd6792dcc0",
+			"revisionTime": "2017-03-06T10:41:37Z"
+		},
+		{
+			"checksumSHA1": "khL6oKjx81rAZKW+36050b7f5As=",
+			"path": "github.com/jmcvetta/randutil",
+			"revision": "2bb1b664bcff821e02b2a0644cd29c7e824d54f8",
+			"revisionTime": "2015-08-17T12:26:01Z"
+		},
+		{
+			"checksumSHA1": "eOXF2PEvYLMeD8DSzLZJWbjYzco=",
+			"path": "github.com/kr/pretty",
+			"revision": "cfb55aafdaf3ec08f0db22699ab822c50091b1c4",
+			"revisionTime": "2016-08-23T17:07:15Z"
+		},
+		{
+			"checksumSHA1": "uulQHQ7IsRKqDudBC8Go9J0gtAc=",
+			"path": "github.com/kr/text",
+			"revision": "7cafcd837844e784b526369c9bce262804aebc60",
+			"revisionTime": "2016-05-04T02:26:26Z"
+		},
+		{
+			"checksumSHA1": "cJE7dphDlam/i7PhnsyosNWtbd4=",
+			"path": "github.com/mattn/go-runewidth",
+			"revision": "97311d9f7767e3d6f422ea06661bc2c7a19e8a5d",
+			"revisionTime": "2017-05-10T07:48:58Z"
+		},
+		{
+			"checksumSHA1": "h+oCMj21PiQfIdBog0eyUtF1djs=",
+			"path": "github.com/olekukonko/tablewriter",
+			"revision": "febf2d34b54a69ce7530036c7503b1c9fbfdf0bb",
+			"revisionTime": "2017-01-28T05:05:32Z"
+		},
+		{
+			"checksumSHA1": "mhvIMH8oAtOiEyg37zWKmgb+6v4=",
+			"path": "github.com/pborman/uuid",
+			"revision": "b984ec7fa9ff9e428bd0cf0abf429384dfbe3e37",
+			"revisionTime": "2016-08-24T21:06:00Z"
+		},
+		{
+			"checksumSHA1": "zKKp5SZ3d3ycKe4EKMNT0BqAWBw=",
+			"origin": "github.com/stretchr/testify/vendor/github.com/pmezard/go-difflib/difflib",
+			"path": "github.com/pmezard/go-difflib/difflib",
+			"revision": "4d4bfba8f1d1027c4fdbe371823030df51419987",
+			"revisionTime": "2017-01-30T11:31:45Z"
+		},
+		{
+			"checksumSHA1": "KAzbLjI9MzW2tjfcAsK75lVRp6I=",
+			"path": "github.com/rcrowley/go-metrics",
+			"revision": "1f30fe9094a513ce4c700b9a54458bbb0c96996c",
+			"revisionTime": "2016-11-28T21:05:44Z"
+		},
+		{
+			"checksumSHA1": "8Lm8nsMCFz4+gr9EvQLqK8+w+Ks=",
+			"path": "github.com/sethgrid/pester",
+			"revision": "8053687f99650573b28fb75cddf3f295082704d7",
+			"revisionTime": "2016-04-29T17:20:22Z"
+		},
+		{
+			"checksumSHA1": "x/C9sWJ33glBGKgGvb8VvUQvR8s=",
+			"path": "github.com/sirupsen/logrus",
+			"revision": "5e5dc898656f695e2a086b8e12559febbfc01562",
+			"revisionTime": "2017-05-15T10:45:16Z"
+		},
+		{
+			"checksumSHA1": "tmQu1W+sCGYt9H/B7Igbob3mrgs=",
+			"path": "github.com/ssor/bom",
+			"revision": "6ed919a936d5ab554e4b40bc51f7c522488122c6",
+			"revisionTime": "2017-03-02T07:32:02Z"
+		},
+		{
+			"checksumSHA1": "JXUVA1jky8ZX8w09p2t5KLs97Nc=",
+			"path": "github.com/stretchr/testify/assert",
+			"revision": "4d4bfba8f1d1027c4fdbe371823030df51419987",
+			"revisionTime": "2017-01-30T11:31:45Z"
+		},
+		{
+			"checksumSHA1": "dBmk68coq8umF51FL23vNXOOS7o=",
+			"path": "go4.org/osutil",
+			"revision": "fba789b7e39ba524b9e60c45c37a50fae63a2a09",
+			"revisionTime": "2018-01-03T06:19:21Z"
+		},
+		{
+			"checksumSHA1": "Y+HGqEkYM15ir+J93MEaHdyFy0c=",
+			"path": "golang.org/x/net/context",
+			"revision": "da118f7b8e5954f39d0d2130ab35d4bf0e3cb344",
+			"revisionTime": "2017-04-23T14:02:46Z"
+		},
+		{
+			"checksumSHA1": "vqc3a+oTUGX8PmD0TS+qQ7gmN8I=",
+			"path": "golang.org/x/net/html",
+			"revision": "da118f7b8e5954f39d0d2130ab35d4bf0e3cb344",
+			"revisionTime": "2017-04-23T14:02:46Z"
+		},
+		{
+			"checksumSHA1": "00eQaGynDYrv3tL+C7l9xH0IDZg=",
+			"path": "golang.org/x/net/html/atom",
+			"revision": "da118f7b8e5954f39d0d2130ab35d4bf0e3cb344",
+			"revisionTime": "2017-04-23T14:02:46Z"
+		},
+		{
+			"checksumSHA1": "k3L1Q7anlDsX2njPAE5Dd2SWVlw=",
+			"path": "gopkg.in/jmcvetta/napping.v3",
+			"revision": "4c7b4b235c63152afa9a1c6384e708e0fbfd77ca",
+			"revisionTime": "2017-03-11T05:32:04Z"
+		}
+	],
+	"rootPath": "github.com/Financial-Times/v1-authors-transformer"
+}
