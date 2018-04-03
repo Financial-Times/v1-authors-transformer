@@ -1,4 +1,4 @@
-# V1 Authors Transformer
+# V1 Authors Transformer [RETIRED]
 [![CircleCI](https://circleci.com/gh/Financial-Times/v1-authors-transformer.svg?style=svg)](https://circleci.com/gh/Financial-Times/v1-authors-transformer) [![Go Report Card](https://goreportcard.com/badge/github.com/Financial-Times/v1-authors-transformer)](https://goreportcard.com/report/github.com/Financial-Times/v1-authors-transformer) [![Coverage Status](https://coveralls.io/repos/github/Financial-Times/v1-authors-transformer/badge.svg?branch=master)](https://coveralls.io/github/Financial-Times/v1-authors-transformer?branch=master) [![codecov](https://codecov.io/gh/Financial-Times/v1-authors-transformer/branch/master/graph/badge.svg)](https://codecov.io/gh/Financial-Times/v1-authors-transformer)
 
 The service exposes read API endpoints to get information about authors contributing to FT content.
